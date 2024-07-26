@@ -8935,7 +8935,11 @@ document.write(unescape("%3Cscript%3E%0A/*%21%0A%20%20%20%20*%20Start%20Bootstra
 <div class='fixed-banner'>
 <button><a href='https://drive.google.com/file/d/1oyDr3aQ0BlsJ6Mp1Vugc1HL1jB3eWw1C/view?usp=sharing'><span style='color: white;'>Cài đặt App Lên điện thoại</span></a></button>
 </div>
-<script src="/mywebsite/pwalephiphi.js"></script>
+  <script>
+  if (typeof navigator.serviceWorker !== 'undefined') {
+    navigator.serviceWorker.register('/mywebsite/sw.js')
+  }
+</script>
 <!-- end code shortcup lephiphi.com -->
 <div class='no-items section' id='codepro'></div>
 
