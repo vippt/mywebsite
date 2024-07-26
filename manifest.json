@@ -1,14 +1,14 @@
 {
-  "short_name": "Test App",
-  "name": "Web Test App",
+  "short_name": "CV Online Lê Phi Phi",
+  "name": "CV Online Lê Phi Phi",
   "icons": [
     {
-      "src": "imgs/icon192.png",
+      "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-FEPhQrbP3fe4t_-lKvR0ZOzuzK88kKIgJSmmj9ML_fEpzGa3sN9i5c3-IeUNkbIbebQtDh9lFGrhshx3AitmnEmyb1LNUz0eR-0QC-GfEYgBV_qGXmHWLX9BfWS6xeFcqv-NPI8ayDzEYGhsl5iTJg0DmdVPwYzfXWx4aoTiqJ-CQoUMA2gVhSXgY_k/w640-h640/Untitled%20(1).png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "imgs/icon512.png",
+      "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-FEPhQrbP3fe4t_-lKvR0ZOzuzK88kKIgJSmmj9ML_fEpzGa3sN9i5c3-IeUNkbIbebQtDh9lFGrhshx3AitmnEmyb1LNUz0eR-0QC-GfEYgBV_qGXmHWLX9BfWS6xeFcqv-NPI8ayDzEYGhsl5iTJg0DmdVPwYzfXWx4aoTiqJ-CQoUMA2gVhSXgY_k/w640-h640/Untitled%20(1).png",
       "type": "image/png",
       "sizes": "512x512"
     }
