@@ -1,7 +1,7 @@
 const CACHE_NAME = 'my-cache-v1';
 const URLS_TO_CACHE = [
-    '/',
-    '/index.html',
+    '/mywebsite',
+    '/mywebsite/index.html',
     // Thay thế bằng các tài nguyên khác của bạn
 ];
 
