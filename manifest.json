@@ -1,6 +1,6 @@
 {
   "short_name": "CV Online Lê Phi Phi",
-  "name": "CV Online Lê Phi Phi",
+  "name": "LePhiPhi.Com",
   "icons": [
     {
       "src": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-FEPhQrbP3fe4t_-lKvR0ZOzuzK88kKIgJSmmj9ML_fEpzGa3sN9i5c3-IeUNkbIbebQtDh9lFGrhshx3AitmnEmyb1LNUz0eR-0QC-GfEYgBV_qGXmHWLX9BfWS6xeFcqv-NPI8ayDzEYGhsl5iTJg0DmdVPwYzfXWx4aoTiqJ-CQoUMA2gVhSXgY_k/w640-h640/Untitled%20(1).png",
@@ -14,7 +14,7 @@
     }
   ],
   "start_url": "/",
-  "background_color": "#3367D6",
+  "background_color": "#FFFFFF",
   "display": "standalone",
-  "theme_color": "#3367D6"
+  "theme_color": "#FFFFFF"
 }
