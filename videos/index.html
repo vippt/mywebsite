@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        .video-list {
+            width: 80%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .video-item {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .video-item img {
+            width: 200px;
+            height: 120px;
+            margin-right: 20px;
+        }
+        .video-item h3 {
+            margin: 0 0 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube Video Search</h1>
+    <div class="search-container">
+        <input type="text" id="search-query" placeholder="Search for videos...">
+        <button onclick="searchVideos()">Search</button>
+    </div>
+    <div class="video-list" id="video-list">
+        <!-- Videos will be inserted here -->
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
