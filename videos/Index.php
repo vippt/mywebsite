@@ -1,7 +1,7 @@
 <?php
 
 // Your API key
-$apiKey = 'YOUR_API_KEY';
+$apiKey = 'AIzaSyBiKaWVqw_N0_-Ko6I-S60dDuNq980PAcM';
 
 // The search query
 $query = 'YOUR_SEARCH_QUERY';
