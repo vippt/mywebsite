@@ -2,19 +2,7 @@
 const API_KEY = 'AIzaSyBiKaWVqw_N0_-Ko6I-S60dDuNq980PAcM';
 const CHANNEL_ID = 'UCLCRwRXKsfzHPBIGD1taWoA'; // Replace with your channel ID
 
-async function searchVideos() {
-    const query = document.getElementById('search-query').value;
-    if (!query) {
-        alert('Please enter a search query');
-        return;
-    }
-
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&q=${encodeURIComponent(query)}&part=snippet&type=video&maxResults=10`);
-    const data = await response.json();
-    displayVideos(data.items);
-}
-
-async function fetchChannelVideos() {
+async function fetchVideos() {
     const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=10`);
     const data = await response.json();
     displayVideos(data.items);
@@ -25,14 +13,12 @@ function displayVideos(videos) {
     videoList.innerHTML = ''; // Clear previous results
 
     videos.forEach(video => {
-        const videoId = video.id.videoId || video.id.playlistId;
-
         const videoItem = document.createElement('div');
         videoItem.classList.add('video-item');
         
         const videoThumbnail = document.createElement('img');
         videoThumbnail.src = video.snippet.thumbnails.medium.url;
-        videoThumbnail.onclick = () => watchVideo(videoId);
+        videoThumbnail.onclick = () => watchVideo(video.id.videoId || video.id.playlistId);
         
         const videoDetails = document.createElement('div');
         
@@ -53,8 +39,12 @@ function displayVideos(videos) {
 }
 
 function watchVideo(videoId) {
-    const videoPlayer = document.getElementById('video-player');
-    videoPlayer.innerHTML = `
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+    const videoList = document.getElementById('video-list');
+    videoList.innerHTML = `
+        <div>
+            <iframe width="100%" height="500" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+        </div>
     `;
 }
+
+fetchVideos();

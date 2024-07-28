@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Video Search</title>
+    <title>YouTube Video Search and Channel Videos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,7 +12,7 @@
             align-items: center;
             padding: 20px;
         }
-        .search-container {
+        .search-container, .channel-container {
             margin-bottom: 20px;
         }
         .video-list {
@@ -34,13 +34,25 @@
         .video-item h3 {
             margin: 0 0 10px 0;
         }
+        .video-player {
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            margin: 20px auto;
+        }
     </style>
 </head>
 <body>
-    <h1>YouTube Video Search</h1>
+    <h1>YouTube Video Search and Channel Videos</h1>
     <div class="search-container">
         <input type="text" id="search-query" placeholder="Search for videos...">
         <button onclick="searchVideos()">Search</button>
+    </div>
+    <div class="channel-container">
+        <button onclick="fetchChannelVideos()">Load Channel Videos</button>
+    </div>
+    <div class="video-player" id="video-player">
+        <!-- Video player will be inserted here -->
     </div>
     <div class="video-list" id="video-list">
         <!-- Videos will be inserted here -->
