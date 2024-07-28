@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>YouTube Search</title>
+    <title>YouTube Trending Videos</title>
     <style>
         #results {
             list-style: none;
+            padding: 0;
         }
         #results li {
             margin-bottom: 20px;
         }
+        iframe {
+            width: 560px;
+            height: 315px;
+        }
     </style>
 </head>
 <body>
-    <h1>YouTube Search</h1>
-    <input type="text" id="query" placeholder="Search for videos">
-    <button onclick="searchYouTube()">Search</button>
+    <h1>Trending YouTube Videos</h1>
     <ul id="results"></ul>
 
     <script src="app.js"></script>
