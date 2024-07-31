@@ -3,61 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube Video Search and Channel Videos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        .search-container, .channel-container {
-            margin-bottom: 20px;
-        }
-        .video-list {
-            width: 80%;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        .video-item {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
-        }
-        .video-item img {
-            width: 200px;
-            height: 120px;
-            margin-right: 20px;
-        }
-        .video-item h3 {
-            margin: 0 0 10px 0;
-        }
-        .video-player {
-            width: 100%;
-            max-width: 800px;
-            height: 450px;
-            margin: 20px auto;
-        }
-    </style>
+    <title>Trang chủ Video</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>YouTube Video Search and Channel Videos</h1>
-    <div class="search-container">
-        <input type="text" id="search-query" placeholder="Search for videos...">
-        <button onclick="searchVideos()">Search</button>
-    </div>
-    <div class="channel-container">
-        <button onclick="fetchChannelVideos()">Load Channel Videos</button>
-    </div>
-    <div class="video-player" id="video-player">
-        <!-- Video player will be inserted here -->
-    </div>
-    <div class="video-list" id="video-list">
-        <!-- Videos will be inserted here -->
-    </div>
+    <!-- Thanh điều hướng -->
+    <header>
+        <div class="container">
+            <h1><a href="#">VideoSite</a></h1>
+            <nav>
+                <input type="text" id="search" placeholder="Tìm kiếm video...">
+                <button id="search-btn">Tìm kiếm</button>
+            </nav>
+        </div>
+    </header>
 
-    <script src="script.js"></script>
+    <!-- Nội dung chính -->
+    <main>
+        <div class="container">
+            <!-- Phần video phổ biến -->
+            <section id="trending-videos">
+                <h2>Video phổ biến</h2>
+                <div class="video-list" id="video-list">
+                    <!-- Video sẽ được tải ở đây -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Chân trang -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 VideoSite. Bảo lưu mọi quyền.</p>
+        </div>
+    </footer>
+
+    <script src="scripts.js"></script>
 </body>
 </html>
