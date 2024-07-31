@@ -1,60 +1,41 @@
-// script.js
-const API_KEY = 'AIzaSyBiKaWVqw_N0_-Ko6I-S60dDuNq980PAcM';
-const CHANNEL_ID = 'UCLCRwRXKsfzHPBIGD1taWoA'; // Replace with your channel ID
+document.addEventListener('DOMContentLoaded', function() {
+    const apiKey = 'YOUR_YOUTUBE_API_KEY'; // Thay thế bằng khóa API của bạn
+    const apiUrl = 'https://www.googleapis.com/youtube/v3/videos';
+    const videoList = document.getElementById('video-list');
 
-async function searchVideos() {
-    const query = document.getElementById('search-query').value;
-    if (!query) {
-        alert('Please enter a search query');
-        return;
+    async function fetchTrendingVideos() {
+        try {
+            const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&regionCode=US&key=${apiKey}`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            displayVideos(data.items);
+        } catch (error) {
+            console.error('Có lỗi xảy ra:', error);
+        }
     }
 
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&q=${encodeURIComponent(query)}&part=snippet&type=video&maxResults=10`);
-    const data = await response.json();
-    displayVideos(data.items);
-}
+    function displayVideos(videos) {
+        videoList.innerHTML = '';
+        videos.forEach(video => {
+            const videoItem = document.createElement('div');
+            videoItem.classList.add('video-item');
+            videoItem.innerHTML = `
+                <a href="https://www.youtube.com/watch?v=${video.id}">
+                    <img src="${video.snippet.thumbnails.medium.url}" alt="${video.snippet.title}">
+                </a>
+                <div class="video-info">
+                    <h3>${video.snippet.title}</h3>
+                    <p>${video.snippet.channelTitle}</p>
+                </div>
+            `;
+            videoList.appendChild(videoItem);
+        });
+    }
 
-async function fetchChannelVideos() {
-    const response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=${API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=10`);
-    const data = await response.json();
-    displayVideos(data.items);
-}
+    fetchTrendingVideos(); // Tải video khi trang được tải
 
-function displayVideos(videos) {
-    const videoList = document.getElementById('video-list');
-    videoList.innerHTML = ''; // Clear previous results
-
-    videos.forEach(video => {
-        const videoId = video.id.videoId || video.id.playlistId;
-
-        const videoItem = document.createElement('div');
-        videoItem.classList.add('video-item');
-        
-        const videoThumbnail = document.createElement('img');
-        videoThumbnail.src = video.snippet.thumbnails.medium.url;
-        videoThumbnail.onclick = () => watchVideo(videoId);
-        
-        const videoDetails = document.createElement('div');
-        
-        const videoTitle = document.createElement('h3');
-        videoTitle.textContent = video.snippet.title;
-        
-        const videoDescription = document.createElement('p');
-        videoDescription.textContent = video.snippet.description;
-        
-        videoDetails.appendChild(videoTitle);
-        videoDetails.appendChild(videoDescription);
-        
-        videoItem.appendChild(videoThumbnail);
-        videoItem.appendChild(videoDetails);
-        
-        videoList.appendChild(videoItem);
+    document.getElementById('search-btn').addEventListener('click', function() {
+        const query = document.getElementById('search').value;
+        window.location.href = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
     });
-}
-
-function watchVideo(videoId) {
-    const videoPlayer = document.getElementById('video-player');
-    videoPlayer.innerHTML = `
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
-    `;
-}
+});
