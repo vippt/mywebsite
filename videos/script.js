@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const apiKey = 'YOUR_YOUTUBE_API_KEY'; // Thay thế bằng khóa API của bạn
+    const apiKey = 'AIzaSyBiKaWVqw_N0_-Ko6I-S60dDuNq980PAcM'; // Thay thế bằng khóa API của bạn
     const apiUrl = 'https://www.googleapis.com/youtube/v3/videos';
     const videoList = document.getElementById('video-list');
 
