@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truyện NetTruyen</title>
+    <title>Danh sách truyện mới</title>
     <style>
         body { font-family: Arial, sans-serif; }
         .truyen { margin-bottom: 20px; }
@@ -16,31 +16,38 @@
 
     <script>
         async function getTruyen() {
-            const url = "https://nettruyenrr.com/tim-truyen";
-            const response = await fetch(url, { mode: "no-cors" });
-            const text = await response.text();
+            const proxy = "https://cors-anywhere.herokuapp.com/"; // Proxy miễn phí
+            const url = proxy + "https://nettruyenrr.com/tim-truyen";
 
-            let parser = new DOMParser();
-            let doc = parser.parseFromString(text, "text/html");
+            try {
+                const response = await fetch(url);
+                const text = await response.text();
 
-            let truyens = [];
-            let items = doc.querySelectorAll(".item");
-            items.forEach(item => {
-                let title = item.querySelector(".title a").innerText;
-                let link = item.querySelector(".title a").href;
-                let img = item.querySelector("img").src;
-                truyens.push({ title, link, img });
-            });
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(text, "text/html");
 
-            let html = "";
-            truyens.forEach(truyen => {
-                html += `<div class="truyen">
-                    <img src="${truyen.img}" alt="${truyen.title}">
-                    <h3><a href="chapter.html?url=${encodeURIComponent(truyen.link)}">${truyen.title}</a></h3>
-                </div>`;
-            });
+                let truyens = [];
+                let items = doc.querySelectorAll(".item");
+                items.forEach(item => {
+                    let title = item.querySelector(".title a").innerText;
+                    let link = item.querySelector(".title a").href;
+                    let img = item.querySelector("img").src;
+                    truyens.push({ title, link, img });
+                });
 
-            document.getElementById("truyen-list").innerHTML = html;
+                let html = "";
+                truyens.forEach(truyen => {
+                    html += `<div class="truyen">
+                        <img src="${truyen.img}" alt="${truyen.title}">
+                        <h3><a href="chapter.html?url=${encodeURIComponent(truyen.link)}">${truyen.title}</a></h3>
+                    </div>`;
+                });
+
+                document.getElementById("truyen-list").innerHTML = html;
+            } catch (error) {
+                console.error("Lỗi khi tải truyện:", error);
+                document.getElementById("truyen-list").innerHTML = "<p>Không thể tải danh sách truyện. Vui lòng thử lại sau.</p>";
+            }
         }
 
         getTruyen();
