@@ -1,1 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách Chapter</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .chapter { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Danh sách Chapter</h1>
+    <div id="chapter-list"></div>
 
+    <script>
+        async function getChapters() {
+            const params = new URLSearchParams(window.location.search);
+            const truyenUrl = params.get("url");
+
+            if (!truyenUrl) {
+                document.getElementById("chapter-list").innerHTML = "<p>Không tìm thấy truyện!</p>";
+                return;
+            }
+
+            const response = await fetch(truyenUrl, { mode: "no-cors" });
+            const text = await response.text();
+
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(text, "text/html");
+
+            let chapters = [];
+            let items = doc.querySelectorAll(".list-chapter li a");
+            items.forEach(item => {
+                let title = item.innerText.trim();
+                let link = item.href;
+                chapters.push({ title, link });
+            });
+
+            let html = "";
+            chapters.forEach(chapter => {
+                html += `<div class="chapter">
+                    <a href="reader.html?url=${encodeURIComponent(chapter.link)}">${chapter.title}</a>
+                </div>`;
+            });
+
+            document.getElementById("chapter-list").innerHTML = html;
+        }
+
+        getChapters();
+    </script>
+</body>
+</html>
