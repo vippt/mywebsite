@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đọc Truyện</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        img { width: 100%; max-width: 800px; display: block; margin: 10px auto; }
+    </style>
+</head>
+<body>
+    <h1>Đọc Truyện</h1>
+    <div id="chapter-content"></div>
+
+    <script>
+        async function getChapterImages() {
+            const params = new URLSearchParams(window.location.search);
+            const chapterUrl = params.get("url");
+
+            if (!chapterUrl) {
+                document.getElementById("chapter-content").innerHTML = "<p>Không tìm thấy chapter!</p>";
+                return;
+            }
+
+            const response = await fetch(chapterUrl, { mode: "no-cors" });
+            const text = await response.text();
+
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(text, "text/html");
+
+            let images = [];
+            let items = doc.querySelectorAll(".page-chapter img");
+            items.forEach(img => {
+                images.push(img.src);
+            });
+
+            let html = "";
+            images.forEach(img => {
+                html += `<img src="${img}" alt="Trang truyện">`;
+            });
+
+            document.getElementById("chapter-content").innerHTML = html;
+        }
+
+        getChapterImages();
+    </script>
+</body>
+</html>
