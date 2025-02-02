@@ -1,6 +1,6 @@
 async function fetchTruyen() {
     const url = "https://nettruyenrr.com";  // URL của NetTruyenRR
-    const proxy = "https://api.allorigins.win/get?url=" + encodeURIComponent(url);
+    const proxy = "https://corsproxy.io/?" + encodeURIComponent(url);
 
     try {
         let response = await fetch(proxy);
