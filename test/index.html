@@ -3,46 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tin tức từ VTC News</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; }
-        h1 { text-align: center; }
-        ul { list-style: none; padding: 0; }
-        li { margin-bottom: 10px; }
-        a { text-decoration: none; color: blue; font-weight: bold; }
-    </style>
+    <title>Truyện Tranh</title>
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Tin mới từ VTC News</h1>
-    <ul id="news-list">Đang tải...</ul>
-
-    <script>
-    async function loadNews() {
-        try {
-            // Cách 1: Dùng RSS Feed nếu có
-            const rssURL = "https://vtc.vn/rss/tin-moi-nhat.rss"; 
-            const response = await fetch(rssURL);
-            const text = await response.text();
-            const parser = new DOMParser();
-            const xml = parser.parseFromString(text, "application/xml");
-            const items = xml.querySelectorAll("item");
-
-            let html = "";
-            items.forEach(item => {
-                const title = item.querySelector("title").textContent;
-                const link = item.querySelector("link").textContent;
-                html += `<li><a href="${link}" target="_blank">${title}</a></li>`;
-            });
-
-            document.getElementById("news-list").innerHTML = html;
-
-        } catch (error) {
-            console.error("Lỗi khi tải tin tức:", error);
-            document.getElementById("news-list").innerHTML = "<li>Không thể tải tin tức.</li>";
-        }
-    }
-
-    loadNews();
-    </script>
+    <h1>Truyện Tranh Mới Nhất</h1>
+    <div id="truyen-list"></div>
 </body>
 </html>
