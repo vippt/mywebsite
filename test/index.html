@@ -3,30 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Truyện</title>
-    <link rel="stylesheet" href="style.css">
+    <title>NetTruyen Clone</title>
+    <script src="script.js"></script>
 </head>
 <body>
-    <h1>Danh Sách Truyện</h1>
+    <h1>Danh sách truyện mới cập nhật</h1>
     <div id="truyen-list"></div>
-    <script src="script.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const viewedChapters = JSON.parse(localStorage.getItem("viewedChapters")) || {};
-            document.getElementById("truyen-list").addEventListener("click", function (e) {
-                if (e.target.tagName === "A") {
-                    viewedChapters[e.target.href] = true;
-                    localStorage.setItem("viewedChapters", JSON.stringify(viewedChapters));
-                    e.target.classList.add("viewed");
-                }
-            });
-            
-            document.querySelectorAll("#truyen-list a").forEach(link => {
-                if (viewedChapters[link.href]) {
-                    link.classList.add("viewed");
-                }
-            });
-        });
-    </script>
 </body>
 </html>
