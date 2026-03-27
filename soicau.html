@@ -3,151 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Soi Cầu BRC PRO - Lê Phi Phi</title>
+    <title>Soi Cầu BRC VIP - Lê Phi Phi</title>
     <style>
-        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        #header { background: #2c3e50; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
-        #header span { font-size: 13px; font-weight: bold; }
-        .btns button { border: none; padding: 5px 10px; border-radius: 4px; color: white; font-size: 11px; cursor: pointer; margin-left: 5px; }
-        .btn-close { background: #7f8c8d; }
-        .btn-stop { background: #c0392b; }
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        #controls { padding: 10px; background: #f8f9fa; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-bottom: 1px solid #eee; }
-        button.main { padding: 12px 0; font-size: 16px; border: none; color: white; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.1s; }
-        button.main:active { transform: scale(0.95); }
-        .p { background: #3498db; } .b { background: #e74c3c; } .t { background: #2ecc71; }
-        .lp { background: #2980b9; border: 2px solid #fff; } .lb { background: #c0392b; border: 2px solid #fff; }
-        .reset { background: #95a5a6; grid-column: span 3; padding: 8px; font-size: 13px; margin-top: 5px; }
+        /* Header */
+        #header { background: #2c3e50; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        #header span { font-size: 14px; font-weight: bold; letter-spacing: 0.5px; }
+        .btn-stop { background: #e74c3c; border: none; padding: 6px 12px; border-radius: 4px; color: white; font-size: 11px; cursor: pointer; font-weight: bold; }
 
-        #history { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 5px; background: #fafafa; }
-        .cell { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        /* Bàn phím điều khiển */
+        #controls { padding: 12px; background: #f8f9fa; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-bottom: 1px solid #ddd; }
+        button.main { padding: 15px 0; font-size: 16px; border: none; color: white; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.1s; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+        button.main:active { transform: translateY(2px); box-shadow: none; }
 
-        #result-wrapper { padding: 15px; background: #fff; border-top: 1px solid #eee; }
-        .analysis-card { padding: 12px; border-left: 5px solid #bdc3c7; background: #fff; border-radius: 0 10px 10px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; }
-        .advice-text { font-size: 17px; font-weight: bold; margin-top: 8px; }
+        .p { background: #3498db; } /* Player Chẵn */
+        .b { background: #e74c3c; } /* Banker Chẵn */
+        .t { background: #2ecc71; } /* Hòa */
+        .lp { background: #2980b9; border: 2px solid #fff; } /* Lẻ P */
+        .lb { background: #c0392b; border: 2px solid #fff; } /* Lẻ B */
+        .reset { background: #95a5a6; grid-column: span 3; padding: 10px; font-size: 14px; margin-top: 5px; box-shadow: 0 3px 0 #7f8c8d; }
+
+        /* Lịch sử ván đấu */
+        #history { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; background: #fdfdfd; }
+        .cell { width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        /* Khung kết quả phân tích */
+        #result-wrapper { padding: 15px; background: #fff; border-top: 3px solid #34495e; }
+        .analysis-card { padding: 12px; background: #fff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #eee; }
+
+        .win-rate { font-size: 20px; font-weight: bold; color: #27ae60; text-align: center; margin-bottom: 8px; border-bottom: 2px dashed #eee; padding-bottom: 8px; }
+        .stat-line { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; color: #555; }
+        .stat-line b { color: #2c3e50; }
+
+        .advice-box { font-size: 18px; font-weight: bold; text-align: center; padding: 12px; border-radius: 8px; margin-top: 10px; border: 2px solid #ddd; transition: 0.3s; }
     </style>
 </head>
 <body>
 
 <div id="header">
-    <span>🔵 PHÂN TÍCH PRO - LÊ PHI PHI</span>
-    <div class="btns">
-        <button class="btn-close" onclick="Android.closeChat()">ĐÓNG</button>
-        <button class="btn-stop" onclick="Android.closeApp()">TẮT</button>
-    </div>
+    <span>📊 SOI CẦU PRO - LÊ PHI PHI</span>
+    <button class="btn-stop" onclick="Android.closeApp()">THOÁT</button>
 </div>
 
 <div id="controls">
-    <button class="main p" onclick="add('P')">P(Chẵn)</button>
-<button class="main p lp" onclick="add('LP')">P(Lẻ)</button>
-    <button class="main b" onclick="add('B')">B(Chẵn)</button>
-<button class="main b lb" onclick="add('LB')">B(Lẻ)</button>
+    <button class="main p" onclick="add('P')">P (Chẵn)</button>
+    <button class="main b" onclick="add('B')">B (Chẵn)</button>
     <button class="main t" onclick="add('T')">Hòa (T)</button>
-    
-  
-    <button class="main reset" onclick="resetNow()">RESET</button>
+    <button class="main lp" onclick="add('LP')">P (Lẻ)</button>
+    <button class="main lb" onclick="add('LB')">B (Lẻ)</button>
+    <button class="main reset" onclick="resetNow()">LÀM MỚI (RESET ALL)</button>
 </div>
-
-<div id="history" id="history"></div>
+<div class="win-rate">Vd: Player = 3 Banker = 4 => Tổng 7 => B (Lẻ)</div>
+<div id="history" id="history_list"></div>
 
 <div id="result-wrapper">
     <div id="result" class="analysis-card">
-        <div style="text-align: center; color: #999;">Đang chờ dữ liệu...</div>
+        <div style="text-align: center; color: #999; padding: 20px;">Vui lòng nhập dữ liệu để bắt đầu soi cầu...</div>
     </div>
 </div>
 
 <script>
     let data = [];
+    let nextBet = null; // Dự đoán treo cho ván tiếp theo
+    let winCount = 0;
+    let totalPredictions = 0;
 
     function add(x) {
+        // 1. Đối chiếu kết quả vừa nhập với dự đoán của ván trước (Bỏ qua ván Hòa)
+        if (nextBet !== null && x !== 'T') {
+            let actualSide = (x === 'B' || x === 'LB') ? 'B' : 'P';
+            if (nextBet === actualSide) {
+                winCount++;
+            }
+            totalPredictions++;
+        }
+
         data.push(x);
         render();
     }
 
     function resetNow() {
+        // Reset sạch toàn bộ mảng và biến thống kê
         data = [];
-        render();
+        nextBet = null;
+        winCount = 0;
+        totalPredictions = 0;
+
+        render(); // Vẽ lại giao diện trống
+
+        // Hiển thị thông báo đã reset
+        const resDiv = document.getElementById("result");
+        resDiv.innerHTML = "<div style='text-align: center; color: #e67e22; font-weight: bold; padding: 20px;'>Dữ liệu đã được làm mới hoàn toàn!</div>";
     }
 
     function render() {
         const container = document.getElementById("history");
         container.innerHTML = "";
         data.forEach(i => {
-            let color = (i=="P" || i=="LP") ? "#3498db" : (i=="B" || i=="LB") ? "#e74c3c" : "#2ecc71";
-            let label = i;
+            let color = (i.includes('P')) ? "#3498db" : (i.includes('B')) ? "#e74c3c" : "#2ecc71";
             let cell = document.createElement("div");
             cell.className = "cell";
             cell.style.background = color;
-            cell.innerText = label;
+            cell.innerText = i;
             container.appendChild(cell);
         });
         container.scrollTop = container.scrollHeight;
-        analyze();
+
+        if(data.length > 0) analyze();
     }
 
     function analyze() {
         const resDiv = document.getElementById("result");
-        if (data.length < 3) {
-            resDiv.innerHTML = "<div style='text-align:center; color:#999;'>Nhập thêm dữ liệu để soi cầu...</div>";
-            return;
-        }
+        let lastResult = data[data.length - 1];
 
-        // 1. Tính toán trọng số theo quy tắc người dùng
-        let last = data[data.length - 1];
-        let pWeight = 0;
-        let bWeight = 0;
+        // --- 1. TÍNH TRỌNG SỐ (%) ---
+        let pWeight = 50, bWeight = 50;
+        if (lastResult === "P" || lastResult === "B") { pWeight = 60; bWeight = 40; }
+        else if (lastResult === "LP" || lastResult === "LB") { pWeight = 40; bWeight = 60; }
 
-        // Quy tắc: P/B mặc định là chẵn -> 60% P. Lẻ P/Lẻ B -> 60% B.
-        if (last === "P" || last === "B") {
-            pWeight = 60; bWeight = 40;
-        } else if (last === "LP" || last === "LB") {
-            pWeight = 40; bWeight = 60;
-        } else {
-            pWeight = 50; bWeight = 50;
-        }
+        // --- 2. NHẬN DIỆN CẦU ĐẶC BIỆT ---
+        let detection = "Sóng ngắn (Ngẫu nhiên)";
+        let finalAdvice = pWeight > bWeight ? "P" : "B"; // Mặc định theo trọng số
 
-        // 2. Logic soi cầu (Bệt / Nhảy)
-        let advice = "Theo dõi";
-        let finalSide = "";
-        let confidence = "Trung bình";
-        
-        // Kiểm tra cầu bệt (Streak)
+        // Kiểm tra cầu bệt (3 ván cùng phía trở lên)
         let streak = 0;
-        let lastBase = (last === "P" || last === "LP") ? "P" : "B";
-        for (let i = data.length - 1; i >= 0; i--) {
-            let currentBase = (data[i] === "P" || data[i] === "LP") ? "P" : "B";
-            if (currentBase === lastBase) streak++; else break;
+        let lastSide = (lastResult.includes('P')) ? 'P' : (lastResult.includes('B') ? 'B' : '');
+        if (lastSide !== '') {
+            for (let i = data.length - 1; i >= 0; i--) {
+                let currentSide = data[i].includes('P') ? 'P' : (data[i].includes('B') ? 'B' : 'T');
+                if (currentSide === lastSide) streak++;
+                else if (currentSide !== 'T') break;
+            }
         }
 
-        // Kết hợp trọng số và cầu
+        // Kiểm tra cầu nhảy 1-1 (ít nhất 3 lần đổi cửa liên tiếp)
+        let chopCount = 0;
+        for (let i = data.length - 1; i > 0; i--) {
+            let sideA = data[i].includes('P') ? 'P' : 'B';
+            let sideB = data[i-1].includes('P') ? 'P' : 'B';
+            if (sideA !== sideB && data[i] !== 'T' && data[i-1] !== 'T') chopCount++;
+            else break;
+        }
+
+        // ƯU TIÊN HIỂN THỊ CẦU
         if (streak >= 3) {
-            advice = `CẦU BỆT: Đánh tiếp ${lastBase}`;
-            finalSide = lastBase;
-            confidence = "CAO 🔥";
-        } else {
-            // Ưu tiên theo trọng số % đã tính ở bước 1
-            finalSide = pWeight > bWeight ? "P" : "B";
-            advice = `XU HƯỚNG: Ưu tiên ${finalSide === "P" ? "PLAYER" : "BANKER"}`;
+            detection = `Cầu Bệt ${streak} tay (${lastSide})`;
+            finalAdvice = lastSide; // Bám bệt
+        } else if (chopCount >= 3) {
+            detection = `Cầu Nhảy 1-1 (${chopCount} tay)`;
+            finalAdvice = (lastSide === 'P') ? 'B' : 'P'; // Đánh nghịch đảo
         }
 
-        let color = finalSide === "P" ? "#3498db" : "#e74c3c";
-        resDiv.style.borderLeftColor = color;
+        nextBet = finalAdvice; // Lưu dự đoán để đối chiếu ván sau
+        let winRate = totalPredictions > 0 ? Math.round((winCount / totalPredictions) * 100) : 0;
+        let color = finalAdvice === "P" ? "#3498db" : "#e74c3c";
+
         resDiv.innerHTML = `
-            <div class="stat-row">
-                <span>Dự đoán %:</span>
-                <span><b style="color:#3498db">P: ${pWeight}%</b> - <b style="color:#e74c3c">B: ${bWeight}%</b></span>
+            <div class="win-rate">Tỉ lệ đúng: ${winRate}% (${winCount}/${totalPredictions})</div>
+            <div class="stat-line"><span>Trọng số hiện tại:</span> <b>P:${pWeight}% - B:${bWeight}%</b></div>
+            <div class="stat-line"><span>Nhận diện cầu:</span> <b style="color:#2c3e50">${detection}</b></div>
+            <div class="advice-box" style="background:${color}10; color:${color}; border-color:${color}">
+                DỰ ĐOÁN TIẾP: ${finalAdvice === "P" ? "PLAYER (P/LP)" : "BANKER (B/LB)"}
             </div>
-            <div class="stat-row">
-                <span>Trạng thái:</span>
-                <span>${streak >= 3 ? 'Đang bệt ' + streak + ' cây' : 'Cầu ngắn'}</span>
-            </div>
-            <div style="height:1px; background:#eee; margin:8px 0;"></div>
-            <div class="advice-text" style="color:${color}">${advice}</div>
-            <div style="font-size:12px; margin-top:5px;">Độ tin cậy: <b>${confidence}</b></div>
         `;
     }
 </script>
-
 </body>
 </html>
