@@ -6,47 +6,37 @@
     <title>Soi Cầu BRC VIP - Lê Phi Phi</title>
     <style>
         body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-
-        /* Header */
+        
         #header { background: #2c3e50; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
         #header span { font-size: 14px; font-weight: bold; }
         .btn-stop { background: #e74c3c; border: none; padding: 6px 12px; border-radius: 4px; color: white; font-size: 11px; cursor: pointer; }
 
-        /* Bàn phím điều khiển - Căn chỉnh theo hình ảnh */
-        #controls {
-            padding: 10px;
-            background: #f8f9fa;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* Chia làm 3 cột bằng nhau */
-            gap: 8px;
-            border-bottom: 1px solid #ddd;
+        /* Bàn phím điều khiển - 3 cột đều nhau */
+        #controls { 
+            padding: 10px; 
+            background: #f8f9fa; 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 8px; 
+            border-bottom: 1px solid #ddd; 
         }
+        
+        button.main { padding: 12px 0; font-size: 15px; border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.1s; box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
+        button.main:active { transform: translateY(1px); box-shadow: none; }
+        
+        .p { background: #3498db; }    
+        .b { background: #e74c3c; }    
+        .t { background: #2ecc71; }    
+        .lp { background: #2980b9; }   
+        .lb { background: #c0392b; }   
+        .reset { background: #95a5a6; } 
 
-        button.main {
-            padding: 12px 0;
-            font-size: 15px;
-            border: none;
-            color: white;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-        button.main:active { opacity: 0.8; transform: scale(0.98); }
+        /* Dòng chú thích căn giữa */
+        #note { text-align: center; padding: 8px; font-size: 13px; color: #555; background: #fff; border-bottom: 1px solid #eee; font-weight: 500; }
 
-        /* Màu sắc chuẩn theo hình */
-        .p { background: #3498db; }    /* Hàng 1 - Cột 1 */
-        .b { background: #e74c3c; }    /* Hàng 1 - Cột 2 */
-        .t { background: #2ecc71; }    /* Hàng 1 - Cột 3 */
-        .lp { background: #2980b9; }   /* Hàng 2 - Cột 1 */
-        .lb { background: #c0392b; }   /* Hàng 2 - Cột 2 */
-        .reset { background: #95a5a6; } /* Hàng 2 - Cột 3 (Đúng vị trí bạn muốn) */
+        #history { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px; background: #fafafa; }
+        .cell { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: white; }
 
-        /* Lịch sử ván đấu */
-        #history { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; background: #fdfdfd; }
-        .cell { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: white; }
-
-        /* Khung kết quả */
         #result-wrapper { padding: 12px; background: #fff; border-top: 2px solid #34495e; }
         .analysis-card { padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border: 1px solid #eee; }
         .win-rate { font-size: 18px; font-weight: bold; color: #27ae60; text-align: center; margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
@@ -65,19 +55,20 @@
     <button class="main p" onclick="add('P')">P</button>
     <button class="main b" onclick="add('B')">B</button>
     <button class="main t" onclick="add('T')">(T)</button>
-
     <button class="main lp" onclick="add('LP')">P(Lẻ)</button>
     <button class="main lb" onclick="add('LB')">B(Lẻ)</button>
     <button class="main reset" onclick="resetNow()">RESET</button>
 </div>
-<div style="text-align: center; padding: 10px; font-size: 14px; color: #e74c3c; background: #fff; border-bottom: 1px solid #eee;">
+
+<div id="note">
     P = Player, B = Banker, VD: P = 3, B = 4 => 7 => B Lẻ
 </div>
+
 <div id="history"></div>
 
 <div id="result-wrapper">
     <div id="result" class="analysis-card">
-        <div style="text-align: center; color: #999;">Nhập dữ liệu...</div>
+        <div style="text-align: center; color: #999;">Đang chờ dữ liệu...</div>
     </div>
 </div>
 
@@ -98,12 +89,9 @@
     }
 
     function resetNow() {
-        data = [];
-        nextBet = null;
-        winCount = 0;
-        totalPredictions = 0;
+        data = []; nextBet = null; winCount = 0; totalPredictions = 0;
         render();
-        document.getElementById("result").innerHTML = "<div style='text-align:center;color:#999;'>Đã làm mới dữ liệu!</div>";
+        document.getElementById("result").innerHTML = "<div style='text-align:center;color:#999;'>Đã reset toàn bộ thống kê!</div>";
     }
 
     function render() {
@@ -124,27 +112,42 @@
     function analyze() {
         const resDiv = document.getElementById("result");
         let lastResult = data[data.length - 1];
-
+        
+        // 1. Trọng số 60%
         let pWeight = 50, bWeight = 50;
         if (lastResult === "P" || lastResult === "B") { pWeight = 60; bWeight = 40; }
         else if (lastResult === "LP" || lastResult === "LB") { pWeight = 40; bWeight = 60; }
 
+        // 2. NHẬN DIỆN CẦU (BỆT & 1-1)
         let detection = "Sóng ngắn";
         let finalAdvice = pWeight > bWeight ? "P" : "B";
-
+        
+        // Kiểm tra cầu bệt
         let streak = 0;
         let lastSide = (lastResult.includes('P')) ? 'P' : (lastResult.includes('B') ? 'B' : '');
         if (lastSide !== '') {
             for (let i = data.length - 1; i >= 0; i--) {
                 let currentSide = data[i].includes('P') ? 'P' : (data[i].includes('B') ? 'B' : 'T');
-                if (currentSide === lastSide) streak++;
+                if (currentSide === lastSide) streak++; 
                 else if (currentSide !== 'T') break;
             }
         }
 
+        // Kiểm tra cầu nhảy 1-1
+        let chopCount = 0;
+        for (let i = data.length - 1; i > 0; i--) {
+            let sA = data[i].includes('P') ? 'P' : (data[i].includes('B') ? 'B' : 'T');
+            let sB = data[i-1].includes('P') ? 'P' : (data[i-1].includes('B') ? 'B' : 'T');
+            if (sA !== 'T' && sB !== 'T' && sA !== sB) chopCount++; else break;
+        }
+
+        // Ưu tiên cầu
         if (streak >= 3) {
-            detection = `Cầu Bệt (${lastSide})`;
+            detection = `Cầu Bệt ${streak} tay`;
             finalAdvice = lastSide;
+        } else if (chopCount >= 2) { // Từ 2 lần đổi trở lên tính là cầu nhảy
+            detection = `Cầu Nhảy 1-1 (${chopCount + 1} tay)`;
+            finalAdvice = (lastSide === 'P') ? 'B' : 'P';
         }
 
         nextBet = finalAdvice;
@@ -154,7 +157,7 @@
         resDiv.innerHTML = `
             <div class="win-rate">Tỉ lệ đúng: ${winRate}% (${winCount}/${totalPredictions})</div>
             <div class="stat-line"><span>Trọng số:</span> <b>P:${pWeight}% - B:${bWeight}%</b></div>
-            <div class="stat-line"><span>Cầu:</span> <b>${detection}</b></div>
+            <div class="stat-line"><span>Cầu:</span> <b style="color:#2c3e50">${detection}</b></div>
             <div class="advice-box" style="background:${color}10; color:${color}; border-color:${color}">
                 DỰ ĐOÁN TIẾP: ${finalAdvice === "P" ? "PLAYER (P)" : "BANKER (B)"}
             </div>
