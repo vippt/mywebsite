@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Soi Cầu BRC VIP - Lê Phi Phi</title>
     <style>
-        /* Giao diện khóa màn hình */
+        /* CSS Màn hình khóa */
         #lock-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #2c3e50; display: flex; flex-direction: column;
@@ -13,52 +13,50 @@
         }
         .login-box {
             background: white; padding: 25px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3); text-align: center; width: 80%; max-width: 300px;
+            text-align: center; width: 85%; max-width: 320px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
-        .login-box h2 { margin-top: 0; color: #333; font-size: 18px; }
         .login-box input {
             width: 100%; padding: 12px; margin: 15px 0;
             border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;
-            text-align: center; font-size: 20px; letter-spacing: 5px;
+            text-align: center; font-size: 20px; letter-spacing: 4px;
         }
         .login-box button {
             width: 100%; padding: 12px; border: none;
-            background: #3498db; color: white; border-radius: 6px;
-            font-weight: bold; cursor: pointer;
+            background: #3498db; color: white; border-radius: 6px; font-weight: bold;
         }
-        #error-msg { color: #e74c3c; font-size: 13px; margin-top: 10px; display: none; }
 
-        /* CSS giao diện chính (Ẩn lúc đầu) */
-        #main-content { display: none; flex-direction: column; height: 100vh; }
-        
-        /* Copy lại toàn bộ phần CSS cũ của bạn ở đây */
-        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; }
-        #header { background: #2c3e50; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
-        #controls { padding: 10px; background: #f8f9fa; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-bottom: 1px solid #ddd; }
-        button.main { padding: 12px 0; font-size: 15px; border: none; color: white; border-radius: 6px; font-weight: bold; }
+        /* CSS Giao diện chính */
+        #main-content { display: none; flex-direction: column; height: 100vh; font-family: 'Segoe UI', sans-serif; }
+        body { margin: 0; background: #ffffff; }
+        #header { background: #2c3e50; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
+        #controls { padding: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #f8f9fa; border-bottom: 1px solid #ddd; }
+        button.main { padding: 12px 0; font-size: 15px; border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; }
         .p { background: #3498db; } .b { background: #e74c3c; } .t { background: #2ecc71; }
         .lp { background: #2980b9; } .lb { background: #c0392b; } .reset { background: #95a5a6; }
-        #history { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px; }
-        .cell { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; font-weight: bold; }
-        #result-wrapper { padding: 12px; border-top: 2px solid #34495e; }
-        .analysis-card { padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border: 1px solid #eee; }
+        #history { flex: 1; padding: 10px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px; }
+        .cell { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: white; font-weight: bold; }
+        #result-wrapper { padding: 12px; border-top: 2px solid #34495e; background: #fff; }
+        .analysis-card { padding: 12px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border: 1px solid #eee; }
+        .stat-header { display: flex; justify-content: center; font-weight: bold; font-size: 16px; margin-bottom: 10px; }
+        .advice-box { text-align: center; padding: 12px; border-radius: 8px; font-weight: bold; margin-top: 8px; border: 2px solid; font-size: 16px; }
     </style>
 </head>
 <body>
 
 <div id="lock-screen">
     <div class="login-box">
-        <h2>🔒 TRUY CẬP</h2>
-        <input type="text" id="pass-input" placeholder="Nhập mã..." maxlength="12" inputmode="numeric">
-        <button onclick="checkPass()">MỞ KHÓA</button>
-        <div id="error-msg">Sai mật khẩu, vui lòng thử lại!</div>
+        <h2 style="margin:0; color: #333;">🔒 TRUY CẬP</h2>
+        <input type="password" id="pass-input" placeholder="MẬT KHẨU" maxlength="4" inputmode="numeric">
+        <button onclick="checkPass()">ĐĂNG NHẬP</button>
+        <div id="error-msg" style="color:red; margin-top:10px; display:none; font-size: 13px;">Mật khẩu không chính xác!</div>
     </div>
 </div>
 
 <div id="main-content">
     <div id="header">
-        <span>📊 SOI CẦU PRO - LÊ PHI PHI</span>
-        <button style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:4px;" onclick="Android.closeApp()">THOÁT</button>
+        <span style="font-size: 14px; font-weight: bold;">📊 SOI CẦU PRO - LÊ PHI PHI</span>
+        <button style="background:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:4px; font-size: 11px;" onclick="Android.closeApp()">THOÁT</button>
     </div>
 
     <div id="controls">
@@ -70,40 +68,35 @@
         <button class="main reset" onclick="resetNow()">RESET</button>
     </div>
 
+    <div style="text-align:center; font-size:11px; padding:6px; color:#666; background:#f1f1f1; border-bottom:1px solid #ddd;">
+        Cách tính: | VD: P=3 + B=4 => Tổng = 7 => B Lẻ
+    </div>
+
     <div id="history"></div>
 
     <div id="result-wrapper">
         <div id="result" class="analysis-card">
-            <div style="text-align: center; color: #999;">Nhập kết quả để bắt đầu...</div>
+            <div style="text-align: center; color: #999;">Nhập dữ liệu ván đấu để phân tích...</div>
         </div>
     </div>
 </div>
 
 <script>
-    // 1. CÀI ĐẶT MẬT KHẨU TẠI ĐÂY
-    const PASS_CODE = "lephiphi"; 
+    // CÀI ĐẶT MẬT KHẨU
+    const PASS_CODE = "1234"; 
 
     function checkPass() {
         const input = document.getElementById("pass-input").value;
-        const lock = document.getElementById("lock-screen");
-        const main = document.getElementById("main-content");
-        const error = document.getElementById("error-msg");
-
         if (input === PASS_CODE) {
-            lock.style.display = "none";
-            main.style.display = "flex";
+            document.getElementById("lock-screen").style.display = "none";
+            document.getElementById("main-content").style.display = "flex";
         } else {
-            error.style.display = "block";
+            document.getElementById("error-msg").style.display = "block";
             document.getElementById("pass-input").value = "";
         }
     }
 
-    // Cho phép nhấn Enter để mở khóa
-    document.getElementById("pass-input").addEventListener("keyup", function(event) {
-        if (event.key === "Enter") checkPass();
-    });
-
-    // 2. LOGIC SOI CẦU (Giữ nguyên từ bản trước)
+    // LOGIC TÍNH TOÁN
     let data = [];
     let winCount = 0;
     let totalPredictions = 0;
@@ -122,7 +115,7 @@
     function resetNow() {
         data = []; winCount = 0; totalPredictions = 0; nextBet = null;
         render();
-        document.getElementById("result").innerHTML = "<div style='text-align:center;color:#999;'>Đã xóa dữ liệu.</div>";
+        document.getElementById("result").innerHTML = "<div style='text-align:center;color:#e67e22;font-weight:bold;'>Dữ liệu đã được xóa sạch!</div>";
     }
 
     function render() {
@@ -139,25 +132,77 @@
     function analyze() {
         const resDiv = document.getElementById("result");
         let lastResult = data[data.length - 1];
-        let finalAdvice = lastResult.includes('P') ? "B" : "P"; // Logic ví dụ
+        
+        // Trọng số cơ bản dựa trên ván lẻ/chẵn
+        let pWeight = 50, bWeight = 50;
+        if (lastResult === "P" || lastResult === "B") { pWeight = 60; bWeight = 40; }
+        else if (lastResult === "LP" || lastResult === "LB") { pWeight = 40; bWeight = 60; }
+
+        let detection = "Sóng ngắn";
+        let finalAdvice = pWeight > bWeight ? "P" : "B";
+        
+        // Lấy side thực tế ván cuối (bỏ qua Hòa)
+        let lastSide = "";
+        for (let i = data.length - 1; i >= 0; i--) {
+            if (data[i] !== 'T') {
+                lastSide = data[i].includes('P') ? 'P' : 'B';
+                break;
+            }
+        }
+
+        // --- LOGIC CẦU BỆT ---
+        let streak = 0;
+        if (lastSide !== '') {
+            for (let i = data.length - 1; i >= 0; i--) {
+                let currentSide = data[i].includes('P') ? 'P' : (data[i].includes('B') ? 'B' : 'T');
+                if (currentSide === lastSide) streak++; 
+                else if (currentSide !== 'T') break;
+            }
+        }
+
+        // --- LOGIC CẦU NHẢY 1-1 ---
+        let chopCount = 0;
+        let filteredData = data.filter(item => item !== 'T'); // Loại bỏ hòa để check 1-1 chính xác
+        if (filteredData.length >= 2) {
+            for (let i = filteredData.length - 1; i > 0; i--) {
+                let current = filteredData[i].includes('P') ? 'P' : 'B';
+                let previous = filteredData[i-1].includes('P') ? 'P' : 'B';
+                if (current !== previous) chopCount++;
+                else break;
+            }
+        }
+
+        // Ưu tiên hiển thị
+        if (streak >= 3) {
+            detection = `Cầu Bệt ${streak} tay`;
+            finalAdvice = lastSide;
+        } else if (chopCount >= 2) {
+            detection = `Cầu Nhảy 1-1 (${chopCount + 1} tay)`;
+            finalAdvice = (lastSide === 'P') ? 'B' : 'P';
+        }
+
         nextBet = finalAdvice;
 
+        // Tính G = Thắng - Thua
         let lossCount = totalPredictions - winCount;
         let G = winCount - lossCount;
         let winRate = totalPredictions > 0 ? Math.round((winCount / totalPredictions) * 100) : 0;
+        let color = finalAdvice === "P" ? "#3498db" : "#e74c3c";
 
         resDiv.innerHTML = `
-            <div style="text-align: center; font-weight: bold; margin-bottom: 8px;">
-                <span style="color: #27ae60;">Đúng: ${winRate}% (${winCount}/${totalPredictions})</span>
-                <span style="color: #ccc; margin: 0 10px;">|</span>
-                <span style="color: #e74c3c;">G = ${G}</span>
+            <div class="stat-header">
+                <span style="color:#27ae60;">Đúng: ${winRate}% (${winCount}/${totalPredictions})</span>
+                <span style="color:#ccc; margin: 0 12px;">|</span>
+                <span style="color:#e74c3c;">G = ${G}</span>
             </div>
-            <div class="advice-box" style="text-align: center; padding: 10px; border-radius: 6px; font-weight: bold; border: 2px solid ${finalAdvice === 'P' ? '#3498db' : '#e74c3c'}; color: ${finalAdvice === 'P' ? '#3498db' : '#e74c3c'};">
-                DỰ ĐOÁN: ${finalAdvice === 'P' ? 'PLAYER' : 'BANKER'}
+            <div style="font-size:13px; color:#555; margin-bottom:5px; text-align:center;">
+                Phân tích: <b style="color:#2c3e50">${detection}</b>
+            </div>
+            <div class="advice-box" style="background:${color}10; color:${color}; border-color:${color}">
+                DỰ ĐOÁN TIẾP: ${finalAdvice === 'P' ? 'PLAYER (P)' : 'BANKER (B)'}
             </div>
         `;
     }
 </script>
-
 </body>
 </html>
