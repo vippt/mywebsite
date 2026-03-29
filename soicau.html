@@ -6,41 +6,50 @@
     <title>Soi Cầu BRC VIP - Lê Phi Phi</title>
     <style>
         body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #ffffff; color: #333; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-
+        
+        /* Header */
         #header { background: #2c3e50; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; color: white; }
         #header span { font-size: 14px; font-weight: bold; }
         .btn-stop { background: #e74c3c; border: none; padding: 6px 12px; border-radius: 4px; color: white; font-size: 11px; cursor: pointer; }
 
-        /* Bàn phím điều khiển - 3 cột đều nhau */
-        #controls {
-            padding: 10px;
-            background: #f8f9fa;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            border-bottom: 1px solid #ddd;
+        /* Bàn phím điều khiển - 3 cột chuẩn hình ảnh */
+        #controls { 
+            padding: 10px; 
+            background: #f8f9fa; 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 8px; 
+            border-bottom: 1px solid #ddd; 
         }
-
+        
         button.main { padding: 12px 0; font-size: 15px; border: none; color: white; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.1s; box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
         button.main:active { transform: translateY(1px); box-shadow: none; }
-
-        .p { background: #3498db; }
-        .b { background: #e74c3c; }
-        .t { background: #2ecc71; }
-        .lp { background: #2980b9; }
-        .lb { background: #c0392b; }
-        .reset { background: #95a5a6; }
+        
+        /* Màu sắc các nút */
+        .p { background: #3498db; }    
+        .b { background: #e74c3c; }    
+        .t { background: #2ecc71; }    
+        .lp { background: #2980b9; }   
+        .lb { background: #c0392b; }   
+        .reset { background: #95a5a6; } 
 
         /* Dòng chú thích căn giữa */
         #note { text-align: center; padding: 8px; font-size: 13px; color: #555; background: #fff; border-bottom: 1px solid #eee; font-weight: 500; }
 
+        /* Lịch sử ván đấu */
         #history { flex: 1; padding: 12px; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px; background: #fafafa; }
         .cell { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: white; }
 
+        /* Khung thống kê & Kết quả */
         #result-wrapper { padding: 12px; background: #fff; border-top: 2px solid #34495e; }
         .analysis-card { padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border: 1px solid #eee; }
-        .win-rate { font-size: 18px; font-weight: bold; color: #27ae60; text-align: center; margin-bottom: 5px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
-        .stat-line { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+        
+        .stat-header { display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
+        .win-rate { color: #27ae60; }
+        .divider { color: #ccc; margin: 0 10px; }
+        .g-score { color: #e74c3c; }
+        
+        .stat-line { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; color: #555; }
         .advice-box { font-size: 16px; font-weight: bold; text-align: center; padding: 10px; border-radius: 6px; margin-top: 5px; border: 2px solid #ddd; }
     </style>
 </head>
@@ -52,15 +61,15 @@
 </div>
 
 <div id="controls">
-    <button class="main p" onclick="add('P')">P</button>
-    <button class="main b" onclick="add('B')">B</button>
+    <button class="main p" onclick="add('P')">P(Chẵn)</button>
+    <button class="main b" onclick="add('B')">B(Chẵn)</button>
     <button class="main t" onclick="add('T')">(T)</button>
     <button class="main lp" onclick="add('LP')">P(Lẻ)</button>
     <button class="main lb" onclick="add('LB')">B(Lẻ)</button>
     <button class="main reset" onclick="resetNow()">RESET</button>
 </div>
 
-<div id="note">
+<div style="text-align: center; color: #e74c3c; font-weight: bold;">
     P = Player, B = Banker, VD: P = 3, B = 4 => 7 => B Lẻ
 </div>
 
@@ -68,7 +77,7 @@
 
 <div id="result-wrapper">
     <div id="result" class="analysis-card">
-        <div style="text-align: center; color: #999;">Đang chờ dữ liệu...</div>
+        <div style="text-align: center; color: #999;">Đang chờ dữ liệu để phân tích...</div>
     </div>
 </div>
 
@@ -79,6 +88,7 @@
     let totalPredictions = 0;
 
     function add(x) {
+        // Đối chiếu kết quả với dự đoán ván trước (Bỏ qua Hòa)
         if (nextBet !== null && x !== 'T') {
             let actualSide = (x === 'B' || x === 'LB') ? 'B' : 'P';
             if (nextBet === actualSide) winCount++;
@@ -91,7 +101,7 @@
     function resetNow() {
         data = []; nextBet = null; winCount = 0; totalPredictions = 0;
         render();
-        document.getElementById("result").innerHTML = "<div style='text-align:center;color:#999;'>Đã reset toàn bộ thống kê!</div>";
+        document.getElementById("result").innerHTML = "<div style='text-align:center;color:#e67e22;font-weight:bold;'>Dữ liệu đã được làm mới!</div>";
     }
 
     function render() {
@@ -112,28 +122,28 @@
     function analyze() {
         const resDiv = document.getElementById("result");
         let lastResult = data[data.length - 1];
-
+        
         // 1. Trọng số 60%
         let pWeight = 50, bWeight = 50;
         if (lastResult === "P" || lastResult === "B") { pWeight = 60; bWeight = 40; }
         else if (lastResult === "LP" || lastResult === "LB") { pWeight = 40; bWeight = 60; }
 
-        // 2. NHẬN DIỆN CẦU (BỆT & 1-1)
+        // 2. Nhận diện Cầu Bệt & Cầu Nhảy
         let detection = "Sóng ngắn";
         let finalAdvice = pWeight > bWeight ? "P" : "B";
-
-        // Kiểm tra cầu bệt
+        
+        // Cầu bệt
         let streak = 0;
         let lastSide = (lastResult.includes('P')) ? 'P' : (lastResult.includes('B') ? 'B' : '');
         if (lastSide !== '') {
             for (let i = data.length - 1; i >= 0; i--) {
                 let currentSide = data[i].includes('P') ? 'P' : (data[i].includes('B') ? 'B' : 'T');
-                if (currentSide === lastSide) streak++;
+                if (currentSide === lastSide) streak++; 
                 else if (currentSide !== 'T') break;
             }
         }
 
-        // Kiểm tra cầu nhảy 1-1
+        // Cầu nhảy 1-1
         let chopCount = 0;
         for (let i = data.length - 1; i > 0; i--) {
             let sA = data[i].includes('P') ? 'P' : (data[i].includes('B') ? 'B' : 'T');
@@ -141,23 +151,30 @@
             if (sA !== 'T' && sB !== 'T' && sA !== sB) chopCount++; else break;
         }
 
-        // Ưu tiên cầu
         if (streak >= 3) {
             detection = `Cầu Bệt ${streak} tay`;
             finalAdvice = lastSide;
-        } else if (chopCount >= 2) { // Từ 2 lần đổi trở lên tính là cầu nhảy
+        } else if (chopCount >= 2) {
             detection = `Cầu Nhảy 1-1 (${chopCount + 1} tay)`;
             finalAdvice = (lastSide === 'P') ? 'B' : 'P';
         }
 
         nextBet = finalAdvice;
+        
+        // 3. Tính toán G = Thắng - Thua
+        let lossCount = totalPredictions - winCount;
+        let G = winCount - lossCount;
         let winRate = totalPredictions > 0 ? Math.round((winCount / totalPredictions) * 100) : 0;
         let color = finalAdvice === "P" ? "#3498db" : "#e74c3c";
 
         resDiv.innerHTML = `
-            <div class="win-rate">Tỉ lệ đúng: ${winRate}% (${winCount}/${totalPredictions})</div>
+            <div class="stat-header">
+                <span class="win-rate">Tỉ lệ đúng: ${winRate}% (${winCount}/${totalPredictions})</span>
+                <span class="divider">|</span>
+                <span class="g-score">G = ${G}</span>
+            </div>
             <div class="stat-line"><span>Trọng số:</span> <b>P:${pWeight}% - B:${bWeight}%</b></div>
-            <div class="stat-line"><span>Cầu:</span> <b style="color:#2c3e50">${detection}</b></div>
+            <div class="stat-line"><span>Nhận diện:</span> <b>${detection}</b></div>
             <div class="advice-box" style="background:${color}10; color:${color}; border-color:${color}">
                 DỰ ĐOÁN TIẾP: ${finalAdvice === "P" ? "PLAYER (P)" : "BANKER (B)"}
             </div>
