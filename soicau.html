@@ -47,7 +47,7 @@
 <div id="lock-screen">
     <div class="login-box">
         <h2 style="margin:0; color: #333;">🔒 TRUY CẬP</h2>
-        <input type="password" id="pass-input" placeholder="MẬT KHẨU" maxlength="4" inputmode="numeric">
+        <input type="text" id="pass-input" placeholder="MẬT KHẨU" maxlength="12" inputmode="numeric">
         <button onclick="checkPass()">ĐĂNG NHẬP</button>
         <div id="error-msg" style="color:red; margin-top:10px; display:none; font-size: 13px;">Mật khẩu không chính xác!</div>
     </div>
@@ -68,7 +68,7 @@
         <button class="main reset" onclick="resetNow()">RESET</button>
     </div>
 
-    <div style="text-align:center; font-size:11px; padding:6px; color:#666; background:#f1f1f1; border-bottom:1px solid #ddd;">
+    <div style="text-align:center; font-size:12px; font-weight: bold; padding:6px; color:#e74c3c; background:#f1f1f1; border-bottom:1px solid #ddd;">
         Cách tính: | VD: P=3 + B=4 => Tổng = 7 => B Lẻ
     </div>
 
@@ -83,7 +83,7 @@
 
 <script>
     // CÀI ĐẶT MẬT KHẨU
-    const PASS_CODE = "1234"; 
+    const PASS_CODE = "1111"; 
 
     function checkPass() {
         const input = document.getElementById("pass-input").value;
@@ -193,7 +193,7 @@
             <div class="stat-header">
                 <span style="color:#27ae60;">Đúng: ${winRate}% (${winCount}/${totalPredictions})</span>
                 <span style="color:#ccc; margin: 0 12px;">|</span>
-                <span style="color:#e74c3c;">G = ${G}</span>
+                <span style="color:#e74c3c;">Win = ${G}</span>
             </div>
             <div style="font-size:13px; color:#555; margin-bottom:5px; text-align:center;">
                 Phân tích: <b style="color:#2c3e50">${detection}</b>
