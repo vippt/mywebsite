@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>QR Thanh Toán MB Bank</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    max-width: 500px;
+    margin: 30px auto;
+    text-align: center;
+}
+input{
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+}
+button{
+    padding: 10px 20px;
+    cursor: pointer;
+}
+img{
+    margin-top: 20px;
+    max-width: 300px;
+}
+</style>
+</head>
+<body>
+
+<h2>Thanh Toán MB Bank</h2>
+
+<input type="number" id="sotien" placeholder="Nhập số tiền">
+
+<input type="text" id="noidung" placeholder="Nhập nội dung chuyển khoản">
+
+<button onclick="taoQR()">Tạo QR</button>
+
+<br>
+
+<img id="qr" alt="Mã QR sẽ hiển thị tại đây">
+
+<script>
+function taoQR(){
+
+    // Thay bằng số tài khoản MB Bank của bạn
+    const stk = "0922332243";
+
+    const sotien = document.getElementById("sotien").value;
+    const noidung = document.getElementById("noidung").value;
+
+    document.getElementById("qr").src =
+        `https://img.vietqr.io/image/MB-${stk}-compact2.png?amount=${sotien}&addInfo=${encodeURIComponent(noidung)}`;
+}
+</script>
+
+</body>
+</html>
