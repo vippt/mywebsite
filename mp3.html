@@ -3,76 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nghe Nhạc YouTube — LePhiPhi.Com</title>
+    <title>Nghe Nhạc YouTube — Chỉ Âm Thanh</title>
     <style>
         * {margin:0; padding:0; box-sizing:border-box; font-family:Segoe UI, sans-serif;}
-        body {background:linear-gradient(135deg, #0f0f23, #1a1a3c); color:#fff; min-height:100vh; padding:20px; padding-bottom:100px;}
+        body {background:linear-gradient(135deg, #0f0f23, #1a1a3c); color:#fff; min-height:100vh; padding:15px; padding-bottom:100px;}
         .container {max-width:900px; margin:0 auto;}
-        h1 {text-align:center; margin-bottom:25px; color:#ff0055;}
+        h1 {text-align:center; margin-bottom:20px; color:#ff0055; font-size:22px;}
         
-        /* ===== Thanh tìm kiếm ===== */
-        .search-box {display:flex; gap:10px; margin-bottom:30px;}
-        .search-box input {flex:1; padding:14px 20px; border:none; border-radius:50px; font-size:16px; background:rgba(255,255,255,.1); color:#fff; outline:none;}
-        .search-box button {padding:14px 28px; border:none; border-radius:50px; background:linear-gradient(90deg, #ff0055, #ff4d79); color:#fff; font-size:16px; cursor:pointer; transition:.3s;}
-        .search-box button:hover {transform:scale(1.05);}
+        /* Thanh tìm kiếm */
+        .search-box {display:flex; gap:8px; margin-bottom:20px;}
+        .search-box input {flex:1; padding:12px 16px; border:none; border-radius:50px; font-size:15px; background:rgba(255,255,255,.1); color:#fff; outline:none;}
+        .search-box button {padding:12px 20px; border:none; border-radius:50px; background:linear-gradient(90deg, #ff0055, #ff4d79); color:#fff; font-size:15px; cursor:pointer;}
         
-        /* ===== Danh sách bài hát ===== */
-        .results {display:flex; flex-direction:column; gap:12px;}
-        .song-item {display:flex; align-items:center; gap:15px; padding:12px; background:rgba(255,255,255,.05); border-radius:10px; cursor:pointer; transition:.3s;}
-        .song-item:hover, .song-item.active {background:rgba(255,0,85,.2); transform:translateX(5px);}
-        .song-thumb {width:100px; height:60px; border-radius:6px; object-fit:cover; background:#333;}
+        /* Danh sách bài hát */
+        .results {display:flex; flex-direction:column; gap:10px;}
+        .song-item {display:flex; align-items:center; gap:12px; padding:10px; background:rgba(255,255,255,.05); border-radius:10px; cursor:pointer; transition:.2s;}
+        .song-item:hover, .song-item.active {background:rgba(255,0,85,.2); transform:translateX(3px);}
+        .song-thumb {width:80px; height:45px; border-radius:6px; object-fit:cover; background:#333; flex-shrink:0;}
         .song-info {flex:1; overflow:hidden;}
         .song-title {font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-        .song-channel {font-size:12px; color:#aaa; margin-top:4px;}
+        .song-channel {font-size:12px; color:#aaa; margin-top:3px;}
         
-        /* ===== Thanh phát nhạc cố định dưới ===== */
-        .player-bar {position:fixed; bottom:0; left:0; right:0; background:rgba(0,0,0,.95); padding:15px 20px; border-top:1px solid rgba(255,255,255,.1); backdrop-filter:blur(20px); z-index:100;}
-        .player-content {max-width:900px; margin:0 auto; display:flex; align-items:center; gap:15px; flex-wrap:wrap;}
-        .player-thumb {width:55px; height:55px; border-radius:8px; object-fit:cover;}
-        .player-info {min-width:150px;}
-        .player-info h4 {font-size:14px;}
-        .player-info p {font-size:12px; color:#aaa;}
-        .controls {display:flex; align-items:center; gap:12px;}
-        .control-btn {background:none; border:none; color:#fff; font-size:22px; cursor:pointer; transition:.2s;}
-        .control-btn:hover {color:#ff0055;}
-        .play-btn {width:45px; height:45px; border-radius:50%; background:#ff0055; display:flex; align-items:center; justify-content:center; font-size:18px;}
+        /* Thanh phát nhạc dưới */
+        .player-bar {position:fixed; bottom:0; left:0; right:0; background:rgba(0,0,0,.95); padding:12px 15px; border-top:1px solid rgba(255,255,255,.1); backdrop-filter:blur(20px); z-index:100;}
+        .player-content {max-width:900px; margin:0 auto; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+        .player-thumb {width:45px; height:45px; border-radius:8px; object-fit:cover; flex-shrink:0;}
+        .player-info {min-width:120px; flex:1;}
+        .player-info h4 {font-size:13px;}
+        .player-info p {font-size:11px; color:#aaa;}
+        .controls {display:flex; align-items:center; gap:8px; flex-shrink:0;}
+        .control-btn {background:none; border:none; color:#fff; font-size:20px; cursor:pointer; padding:5px;}
+        .control-btn:active {color:#ff0055; transform:scale(0.95);}
+        .play-btn {width:40px; height:40px; border-radius:50%; background:#ff0055; display:flex; align-items:center; justify-content:center; font-size:16px;}
         
-        /* ===== KHUNG VIDEO ẨN HOÀN TOÀN ===== */
-        .player-container {display:none;} /* ✅ Ẩn khung video */
-        
-        /* ===== Thanh tiến độ ===== */
-        .progress-area {flex:1; display:flex; flex-direction:column; gap:5px; min-width:150px;}
-        .progress-bar {width:100%; height:6px; background:#444; border-radius:3px; cursor:pointer;}
+        /* Thanh tiến độ */
+        .progress-area {width:100%; display:flex; flex-direction:column; gap:4px; margin-top:8px;}
+        .progress-bar {width:100%; height:5px; background:#444; border-radius:3px; cursor:pointer;}
         .progress-fill {height:100%; width:0%; background:#ff0055; border-radius:3px; transition:width .1s;}
-        .time {display:flex; justify-content:space-between; font-size:11px; color:#aaa; margin-top:3px;}
+        .time {display:flex; justify-content:space-between; font-size:10px; color:#aaa;}
         
-        /* ===== Thông báo lỗi ===== */
-        .error {color:#ff6666; font-size:11px; margin-top:3px;}
+        /* Thông báo */
+        .error {color:#ff6666; font-size:10px; margin-top:2px;}
+        .hint {color:#88ff88; font-size:10px; margin-top:2px;}
         
-        /* Responsive */
-        @media (max-width:768px) {
-            .progress-area {width:100%; order:4; margin-top:10px;}
-        }
+        /* Khung video ẩn */
+        .player-container {display:none;}
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🎵 Nghe Nhạc YouTube — Chỉ Âm Thanh</h1>
-
-    <!-- Thanh tìm kiếm -->
+    <h1>🎵 Nghe Nhạc YouTube</h1>
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Tìm bài hát, ca sĩ...">
+        <input type="text" id="searchInput" placeholder="Tìm bài hát...">
         <button id="searchBtn">Tìm</button>
     </div>
-
-    <!-- Danh sách kết quả -->
     <div class="results" id="results">
-        <p style="text-align:center; color:#aaa; padding:30px;">Nhập tên bài hát để tìm kiếm 🔍</p>
+        <p style="text-align:center; color:#aaa; padding:30px;">Nhập tên bài hát để tìm 🔍</p>
     </div>
 </div>
 
-<!-- Thanh phát nhạc dưới cùng -->
 <div class="player-bar" id="playerBar" style="display:none;">
     <div class="player-content">
         <img class="player-thumb" id="playerThumb" alt="">
@@ -81,14 +71,11 @@
             <p id="playerChannel"></p>
             <p class="error" id="errorMsg"></p>
         </div>
-
         <div class="controls">
             <button class="control-btn" id="prevBtn">⏮</button>
             <button class="control-btn play-btn" id="playBtn">▶</button>
             <button class="control-btn" id="nextBtn">⏭</button>
         </div>
-
-        <!-- Thanh tiến độ thời gian -->
         <div class="progress-area">
             <div class="progress-bar" id="progressBar">
                 <div class="progress-fill" id="progressFill"></div>
@@ -101,7 +88,6 @@
     </div>
 </div>
 
-<!-- KHUNG VIDEO ẨN ĐI — CHỈ PHÁT ÂM THANH -->
 <div class="player-container" id="playerContainer"></div>
 
 <script>
@@ -109,16 +95,17 @@ const API_KEY = "AIzaSyBna3fWAUyMfy4khuYSJEG1r6lHYIBTqVo";
 const API_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
 
 let player, currentIndex = 0, results = [], isPlaying = false, isApiReady = false;
+let waitingUserTap = false; // Chờ người dùng nhấp màn hình trên di động
 
-// ===== Tải YouTube API =====
+// Tải YouTube API
 function loadAPI(){const s=document.createElement('script');s.src="https://www.youtube.com/player_api";document.head.appendChild(s);}
 loadAPI();
 window.onYouTubePlayerAPIReady=()=>{isApiReady=true;console.log("✅ API sẵn sàng");};
 
-// ===== Tìm kiếm bài hát =====
+// Tìm kiếm
 async function searchMusic(q){
     const r=document.getElementById('results');
-    r.innerHTML='<p style="text-align:center; padding:20px; color:#aaa;">🔄 Đang tìm kiếm...</p>';
+    r.innerHTML='<p style="text-align:center; padding:20px; color:#aaa;">🔄 Đang tìm...</p>';
     try{
         const u=`${API_SEARCH_URL}?part=snippet&q=${encodeURIComponent(q)}&type=video&videoCategoryId=10&maxResults=15&key=${API_KEY}`;
         const res=await fetch(u), d=await res.json();
@@ -127,7 +114,7 @@ async function searchMusic(q){
     }catch(e){r.innerHTML=`<p style="text-align:center; color:red;">Lỗi: ${e.message}</p>`;}
 }
 
-// ===== Hiển thị danh sách =====
+// Hiển thị kết quả
 function renderResults(){
     const r=document.getElementById('results'); r.innerHTML='';
     results.forEach((item,i)=>{
@@ -146,12 +133,12 @@ function renderResults(){
     });
 }
 
-// ===== Phát nhạc (ẨN VIDEO) =====
+// Phát nhạc — ĐÃ SỬA cho di động
 function playVideo(idx){
     currentIndex=idx;
     const item=results[idx], vid=item.id.videoId, s=item.snippet;
     
-    // Cập nhật thông tin thanh phát
+    // Cập nhật giao diện
     document.getElementById('playerThumb').src=s.thumbnails.default.url;
     document.getElementById('playerTitle').textContent=s.title;
     document.getElementById('playerChannel').textContent=s.channelTitle;
@@ -159,78 +146,106 @@ function playVideo(idx){
     document.getElementById('errorMsg').textContent='';
     document.querySelectorAll('.song-item').forEach((e,i)=>e.classList.toggle('active',i===idx));
 
+    // Chờ API sẵn sàng
     if(!isApiReady || typeof YT==='undefined'){
-        document.getElementById('errorMsg').textContent='⏳ Đang tải... thử lại giây lát';
-        return setTimeout(()=>playVideo(idx),1200);
+        document.getElementById('errorMsg').innerHTML='⏳ Đang tải... <b>nhấp lại lần nữa</b> nhé!';
+        return setTimeout(()=>playVideo(idx),1500);
     }
 
     try{
-        if(player) player.loadVideoById(vid);
-        else{
+        if(player){
+            // Nếu đã có player → chỉ tải video mới, KHÔNG tự phát
+            player.loadVideoById(vid);
+            document.getElementById('errorMsg').innerHTML='✅ Đã tải → <b>nhấp nút ▶ để nghe</b>';
+            isPlaying=false;
+            updateBtn();
+        }else{
+            // Tạo player — KHÔNG tự phát trên di động, chờ người dùng nhấp
             player=new YT.Player('playerContainer',{
-                width:'1', height:'1', // ✅ Thu nhỏ đến mức không thấy được
-                videoId:vid,
+                width:'1', height:'1', videoId:vid,
                 playerVars:{
-                    autoplay:1,
+                    autoplay:0, // ⚠️ TẮT tự động phát → di động không bị chặn
                     playsinline:1,
                     rel:0,
-                    disablekb:1,
                     controls:0,
                     modestbranding:1,
                     origin:window.location.origin
                 },
                 events:{
-                    onReady:e=>{isPlaying=true; updateBtn(); e.target.playVideo();},
-                    onStateChange:e=>{
-                        // Cập nhật thanh tiến độ
-                        if(e.data===YT.PlayerState.PLAYING) updateProgressTime();
-                        // Tự động chuyển bài khi hết
-                        if(e.data===YT.PlayerState.ENDED) nextSong();
-                        isPlaying=(e.data===YT.PlayerState.PLAYING || e.data===YT.PlayerState.BUFFERING);
+                    onReady:e=>{
+                        console.log("✅ Player sẵn sàng");
+                        document.getElementById('errorMsg').innerHTML='✅ Sẵn sàng → <b>nhấp ▶ để nghe</b>';
+                        isPlaying=false;
                         updateBtn();
                     },
+                    onStateChange:e=>{
+                        if(e.data===YT.PlayerState.PLAYING){
+                            isPlaying=true;
+                            updateBtn();
+                            document.getElementById('errorMsg').textContent='';
+                            updateProgressTime();
+                        }
+                        else if(e.data===YT.PlayerState.PAUSED || e.data===YT.PlayerState.BUFFERING){
+                            isPlaying=(e.data===YT.PlayerState.PLAYING);
+                            updateBtn();
+                        }
+                        else if(e.data===YT.PlayerState.ENDED){
+                            nextSong(); // Tự động chuyển bài khi hết
+                        }
+                    },
                     onError:e=>{
-                        document.getElementById('errorMsg').textContent='⚠️ Video bị chặn nhúng, thử bài khác!';
-                        isPlaying=false; updateBtn();
+                        document.getElementById('errorMsg').innerHTML='⚠️ Video bị chặn → chọn bài khác!';
+                        isPlaying=false;
+                        updateBtn();
                     }
                 }
             });
         }
-    }catch(e){document.getElementById('errorMsg').textContent='Lỗi: '+e.message;}
+    }catch(e){
+        document.getElementById('errorMsg').textContent='❌ Lỗi: '+e.message;
+    }
 }
 
-// ===== Cập nhật thanh tiến độ & thời gian =====
+// Cập nhật thanh tiến độ
 function updateProgressTime(){
-    if(!player || !player.getDuration) return;
+    if(!player || !player.getDuration || !isPlaying) return;
     const t=player.getDuration(), c=player.getCurrentTime();
     if(t>0){
         document.getElementById('progressFill').style.width=(c/t*100)+'%';
         document.getElementById('currentTime').textContent=formatTime(c);
         document.getElementById('totalTime').textContent=formatTime(t);
     }
-    if(isPlaying) setTimeout(updateProgressTime, 1000);
+    setTimeout(updateProgressTime, 1000);
 }
 
-// ===== Định dạng thời gian =====
 function formatTime(s){
     const m=Math.floor(s/60), sec=Math.floor(s%60);
     return `${m}:${sec<10?'0':''}${sec}`;
 }
 
-// ===== Nhảy đến vị trí =====
+// Nhảy vị trí
 document.getElementById('progressBar').onclick=function(e){
     if(!player || !player.getDuration) return;
     const w=this.clientWidth, x=e.offsetX;
     player.seekTo(x/w*player.getDuration());
 };
 
-// ===== Nút điều khiển =====
+// Nút điều khiển
 function updateBtn(){document.getElementById('playBtn').textContent=isPlaying?'⏸':'▶';}
-function togglePlay(){if(!player)return; isPlaying?player.pauseVideo():player.playVideo();}
+function togglePlay(){
+    if(!player) return;
+    if(isPlaying){
+        player.pauseVideo();
+        isPlaying=false;
+    }else{
+        player.playVideo(); // ✅ Phát khi NGƯỜI DÙNG NHẤT → di động cho phép!
+    }
+    updateBtn();
+}
 function prevSong(){if(!results.length)return; currentIndex=(currentIndex-1+results.length)%results.length; playVideo(currentIndex);}
 function nextSong(){if(!results.length)return; currentIndex=(currentIndex+1)%results.length; playVideo(currentIndex);}
 
-// ===== Gán sự kiện =====
+// Gán sự kiện
 document.getElementById('searchBtn').onclick=()=>searchMusic(document.getElementById('searchInput').value);
 document.getElementById('searchInput').onkeypress=e=>{if(e.key==='Enter')searchMusic(e.target.value);};
 document.getElementById('playBtn').onclick=togglePlay;
