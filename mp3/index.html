@@ -3,273 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trình Nghe Nhạc - YouTube</title>
+    <title>YouTube Clone - Nghe Nhạc Online</title>
     <style>
-        * {margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif;}
-        body {background:#0f0f0f; color:#fff;}
-        header {background:#1a1a1a; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;}
-        h1 {font-size:18px; color:#facc15;}
-        .search-bar {display:flex; gap:8px; flex:0 0 400px;}
-        input {flex:1; padding:10px 14px; border:none; border-radius:6px; background:#272727; color:#fff; font-size:14px;}
-        button {padding:10px 18px; border:none; border-radius:6px; background:#facc15; color:#000; font-weight:bold; cursor:pointer;}
-        button:hover {background:#fde047;}
+        * {margin:0; padding:0; box-sizing:border-box; font-family:"Roboto",Arial,sans-serif;}
+        :root {--bg:#0f0f0f; --card:#212121; --hover:#303030; --text:#fff; --text-secondary:#aaa; --red:#ff0000;}
+        body {background:var(--bg); color:var(--text); min-height:100vh;}
 
-        .container {display:flex; gap:16px; padding:16px; max-width:1400px; margin:0 auto;}
+        /* ===== HEADER ===== */
+        header {position:sticky; top:0; background:var(--bg); padding:12px 24px; display:flex; align-items:center; justify-content:space-between; gap:20px; border-bottom:1px solid #272727; z-index:100;}
+        .logo {font-size:22px; font-weight:bold; color:var(--red); display:flex; align-items:center; gap:4px;}
+        .search-bar {display:flex; flex:0 1 640px;}
+        .search-bar input {flex:1; padding:10px 16px; background:#121212; border:1px solid #303030; border-radius:20px 0 0 20px; color:var(--text); font-size:15px; outline:none;}
+        .search-bar button {padding:10px 24px; background:#222; border:1px solid #303030; border-left:none; border-radius:0 20px 20px 0; color:var(--text); cursor:pointer;}
+        .search-bar button:hover {background:#303030;}
 
-        .player-section {flex:2;}
-        .player-wrapper {position:relative; width:100%; padding-bottom:56.25%; border-radius:10px; overflow:hidden; background:#000;}
-        .player-wrapper iframe {position:absolute; top:0; left:0; width:100%; height:100%; border:none;}
-        .player-info {margin-top:12px;}
-        .player-info h2 {font-size:16px; line-height:1.4;}
-        .player-info p {color:#aaa; font-size:13px; margin-top:4px;}
+        /* ===== CONTAINER CHÍNH ===== */
+        .container {max-width:1400px; margin:0 auto; padding:24px;}
 
-        .related-section {flex:1; min-width:320px;}
-        .related-section h3 {font-size:15px; margin-bottom:12px; color:#e2e2e2;}
-        .video-item {display:flex; gap:10px; margin-bottom:10px; cursor:pointer; border-radius:6px; padding:4px; transition:background 0.2s;}
-        .video-item:hover {background:#272727;}
-        .video-item.playing {background:#1e3a5f; border-left:3px solid #facc15;}
-        .video-item img {width:120px; height:68px; object-fit:cover; border-radius:4px;}
-        .video-item .meta {flex:1;}
-        .video-item .title {font-size:13px; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
-        .video-item .chan {font-size:12px; color:#aaa; margin-top:4px;}
-        .error-msg {color:#ff6b6b; font-size:13px; padding:10px;}
+        /* ===== TRANG CHỦ - 3 HÀNG VIDEO ===== */
+        .home-page {display:block;}
+        .page-hidden {display:none !important;}
 
-        @media (max-width:900px) {
-            .container {flex-direction:column;}
-            .search-bar {flex:1; min-width:180px;}
-        }
+        .section-title {font-size:20px; font-weight:600; margin-bottom:16px; padding-left:4px; border-left:4px solid var(--red);}
+        .video-row {display:grid; grid-template-columns:repeat(5, 1fr); gap:16px; margin-bottom:40px;}
+        .video-card {cursor:pointer; transition:transform 0.2s;}
+        .video-card:hover {transform:scale(1.03);}
+        .video-thumb {width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden; background:#272727; position:relative;}
+        .video-thumb img {width:100%; height:100%; object-fit:cover;}
+        .video-info {margin-top:10px; display:flex; gap:10px;}
+        .video-avatar {width:36px; height:36px; border-radius:50%; background:#333; flex-shrink:0; overflow:hidden;}
+        .video-meta h3 {font-size:14px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:4px;}
+        .video-meta p {font-size:13px; color:var(--text-secondary);}
+
+        /* ===== TRANG XEM VIDEO ===== */
+        .watch-page {display:flex; gap:24px;}
+        .watch-left {flex:2;}
+        .watch-right {flex:1; min-width:320px;}
+        .back-btn {background:transparent; border:none; color:var(--text); font-size:15px; cursor:pointer; margin-bottom:16px; display:flex; align-items:center; gap:8px;}
+        .back-btn:hover {color:#ccc;}
+        .player-box {width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden; background:#000; margin-bottom:16px;}
+        .player-box iframe {width:100%; height:100%; border:none;}
+        .watch-title {font-size:20px; font-weight:600; margin-bottom:8px;}
+        .watch-channel {font-size:14px; color:var(--text-secondary); margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #272727;}
+        .related-title {font-size:16px; font-weight:600; margin-bottom:16px;}
+        .related-item {display:flex; gap:10px; margin-bottom:12px; cursor:pointer; border-radius:8px; padding:4px; transition:background 0.2s;}
+        .related-item:hover {background:#272727;}
+        .related-thumb {width:160px; aspect-ratio:16/9; border-radius:6px; overflow:hidden; flex-shrink:0; background:#222;}
+        .related-thumb img {width:100%; height:100%; object-fit:cover;}
+        .related-meta h4 {font-size:14px; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; margin-bottom:4px;}
+        .related-meta p {font-size:12px; color:var(--text-secondary);}
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width:1200px) {.video-row {grid-template-columns:repeat(3,1fr);} .watch-page {flex-direction:column;}}
+        @media (max-width:768px) {.video-row {grid-template-columns:repeat(2,1fr);} .search-bar {flex:1;} header {padding:12px;}}
+        @media (max-width:480px) {.video-row {grid-template-columns:1fr;}}
+
+        .loading {text-align:center; padding:40px; color:var(--text-secondary);}
+        .error {color:#ff6b6b; padding:20px; text-align:center;}
     </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
-    <h1>🎵 Nghe Nhạc Online</h1>
+    <div class="logo" onclick="goHome()">▶ YouTube Clone</div>
     <div class="search-bar">
-        <input type="text" id="q" placeholder="Tìm bài hát, ca sĩ...">
-        <button onclick="searchNhac()">Tìm</button>
+        <input type="text" id="searchInput" placeholder="Tìm kiếm...">
+        <button onclick="doSearch()">🔍</button>
     </div>
+    <div></div>
 </header>
 
 <div class="container">
-    <div class="player-section">
-        <div class="player-wrapper">
-            <iframe id="playerFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-        <div class="player-info">
-            <h2 id="vidTitle">Chọn bài hát để phát</h2>
-            <p id="vidChannel"></p>
-        </div>
+    <!-- TRANG CHỦ - 3 HÀNG VIDEO -->
+    <div id="homePage" class="home-page">
+        <!-- HÀNG 1: Video kênh -->
+        <h2 class="section-title">📺 Video Kênh</h2>
+        <div id="channelRow" class="video-row"><div class="loading">Đang tải...</div></div>
+
+        <!-- HÀNG 2: Tìm kiếm "Nhạc hay 2026" -->
+        <h2 class="section-title">🎵 Nhạc Hay 2026</h2>
+        <div id="musicRow" class="video-row"><div class="loading">Đang tải...</div></div>
+
+        <!-- HÀNG 3: Trending -->
+        <h2 class="section-title">🔥 Trending</h2>
+        <div id="trendingRow" class="video-row"><div class="loading">Đang tải...</div></div>
     </div>
 
-    <div class="related-section">
-        <h3 id="listTitle">🔥 Nhạc mới 2026</h3>
-        <div id="relatedList"></div>
+    <!-- TRANG XEM VIDEO -->
+    <div id="watchPage" class="watch-page page-hidden">
+        <div class="watch-left">
+            <button class="back-btn" onclick="goHome()">← Quay lại trang chủ</button>
+            <div class="player-box">
+                <iframe id="playerFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <h1 id="watchTitle" class="watch-title">Đang tải...</h1>
+            <p id="watchChannel" class="watch-channel"></p>
+        </div>
+        <div class="watch-right">
+            <h3 class="related-title">📺 Video liên quan</h3>
+            <div id="relatedList"></div>
+        </div>
     </div>
 </div>
 
 <script>
+// === CONFIG ===
 const API_KEY = "AIzaSyBna3fWAUyMfy4khuYSJEG1r6lHYIBTqVo";
-const API_URL = "https://www.googleapis.com/youtube/v3/search";
+const API_SEARCH = "https://www.googleapis.com/youtube/v3/search";
+const API_VIDEOS = "https://www.googleapis.com/youtube/v3/videos";
 
-// === DANH SÁCH VIDEO HIỆN TẠI ===
-let danhSachVideo = [];
-let viTriDangPhat = -1;
-
-// === CHUYỂN TIẾNG VIỆT → KHÔNG DẤU ===
+// ========== CHUYỂN TIẾNG VIỆT → SLUG KHÔNG DẤU ==========
 function slugify(text) {
-    const map = {
-        'á':'a','à':'a','ả':'a','ã':'a','ạ':'a','ă':'a','ắ':'a','ằ':'a','ẳ':'a','ẵ':'a','ặ':'a',
-        'â':'a','ấ':'a','ầ':'a','ẩ':'a','ẫ':'a','ậ':'a',
-        'é':'e','è':'e','ẻ':'e','ẽ':'e','ẹ':'e','ê':'e','ế':'e','ề':'e','ể':'e','ễ':'e','ệ':'e',
-        'í':'i','ì':'i','ỉ':'i','ĩ':'i','ị':'i',
-        'ó':'o','ò':'o','ỏ':'o','õ':'o','ọ':'o','ô':'o','ố':'o','ồ':'o','ổ':'o','ỗ':'o','ộ':'o',
-        'ơ':'o','ớ':'o','ờ':'o','ở':'o','ỡ':'o','ợ':'o',
-        'ú':'u','ù':'u','ủ':'u','ũ':'u','ụ':'u','ư':'u','ứ':'u','ừ':'u','ử':'u','ữ':'u','ự':'u',
-        'ý':'y','ỳ':'y','ỷ':'y','ỹ':'y','ỵ':'y',
-        'đ':'d',
-        'Á':'A','À':'A','Ả':'A','Ã':'A','Ạ':'A','Ă':'A','Ắ':'A','Ằ':'A','Ẳ':'A','Ẵ':'A','Ặ':'A',
-        'Â':'A','Ấ':'A','Ầ':'A','Ẩ':'A','Ẫ':'A','Ậ':'A',
-        'É':'E','È':'E','Ẻ':'E','Ẽ':'E','Ẹ':'E','Ê':'E','Ế':'E','Ề':'E','Ể':'E','Ễ':'E','Ệ':'E',
-        'Í':'I','Ì':'I','Ỉ':'I','Ĩ':'I','Ị':'I',
-        'Ó':'O','Ò':'O','Ỏ':'O','Õ':'O','Ọ':'O','Ô':'O','Ố':'O','Ồ':'O','Ổ':'O','Ỗ':'O','Ộ':'O',
-        'Ơ':'O','Ớ':'O','Ờ':'O','Ở':'O','Ỡ':'O','Ợ':'O',
-        'Ú':'U','Ù':'U','Ủ':'U','Ũ':'U','Ụ':'U','Ư':'U','Ứ':'U','Ừ':'U','Ử':'U','Ữ':'U','Ự':'U',
-        'Ý':'Y','Ỳ':'Y','Ỷ':'Y','Ỹ':'Y','Ỵ':'Y',
-        'Đ':'D'
-    };
-    return text.split('').map(c => map[c] || c).join('').toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    const map = {'á':'a','à':'a','ả':'a','ã':'a','ạ':'a','ă':'a','ắ':'a','ằ':'a','ẳ':'a','ẵ':'a','ặ':'a','â':'a','ấ':'a','ầ':'a','ẩ':'a','ẫ':'a','ậ':'a','é':'e','è':'e','ẻ':'e','ẽ':'e','ẹ':'e','ê':'e','ế':'e','ề':'e','ể':'e','ễ':'e','ệ':'e','í':'i','ì':'i','ỉ':'i','ĩ':'i','ị':'i','ó':'o','ò':'o','ỏ':'o','õ':'o','ọ':'o','ô':'o','ố':'o','ồ':'o','ổ':'o','ỗ':'o','ộ':'o','ơ':'o','ớ':'o','ờ':'o','ở':'o','ỡ':'o','ợ':'o','ú':'u','ù':'u','ủ':'u','ũ':'u','ụ':'u','ư':'u','ứ':'u','ừ':'u','ử':'u','ữ':'u','ự':'u','ý':'y','ỳ':'y','ỷ':'y','ỹ':'y','ỵ':'y','đ':'d'};
+    return text.split('').map(c => map[c] || c).join('').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-function unSlugify(slug) {
-    return slug.replace(/-/g, ' ');
+// ========== HIỂN THỊ / ẨN TRANG ==========
+function showPage(page) {
+    document.getElementById('homePage').classList.add('page-hidden');
+    document.getElementById('watchPage').classList.add('page-hidden');
+    document.getElementById(page).classList.remove('page-hidden');
+}
+function goHome() {
+    history.pushState(null, '', '/');
+    showPage('homePage');
 }
 
-// === KHỞI ĐỘNG ===
+// ========== TẠO THẺ VIDEO CARD ==========
+function createVideoCard(item) {
+    const vId = item.id.videoId || item.id;
+    const s = item.snippet;
+    if(!vId || !s) return '';
+    const slug = slugify(s.title);
+    return `
+    <div class="video-card" onclick="playVideo('${vId}', ${JSON.stringify(s.title).replace(/"/g,'&quot;')}, ${JSON.stringify(s.channelTitle).replace(/"/g,'&quot;')})">
+        <div class="video-thumb">
+            <img src="${s.thumbnails?.medium?.url || 'https://via.placeholder.com/320x180'}" alt="">
+        </div>
+        <div class="video-info">
+            <div class="video-avatar"></div>
+            <div class="video-meta">
+                <h3>${s.title}</h3>
+                <p>${s.channelTitle}</p>
+            </div>
+        </div>
+    </div>`;
+}
+
+// ========== TẠO THẺ VIDEO LIÊN QUAN ==========
+function createRelatedItem(item) {
+    const vId = item.id.videoId || item.id;
+    const s = item.snippet;
+    if(!vId || !s) return '';
+    return `
+    <div class="related-item" onclick="playVideo('${vId}', ${JSON.stringify(s.title).replace(/"/g,'&quot;')}, ${JSON.stringify(s.channelTitle).replace(/"/g,'&quot;')})">
+        <div class="related-thumb">
+            <img src="${s.thumbnails?.medium?.url || 'https://via.placeholder.com/160x90'}" alt="">
+        </div>
+        <div class="related-meta">
+            <h4>${s.title}</h4>
+            <p>${s.channelTitle}</p>
+        </div>
+    </div>`;
+}
+
+// ========== TẢI HÀNG 1: VIDEO KÊNH ==========
+// Lưu ý: Thay CHANNEL_ID bằng ID kênh mong muốn
+async function loadChannelVideos() {
+    const CHANNEL_ID = "UC-9-kyTW8ZkZNDHQJ6FgpwQ"; // Kênh nhạc YouTube
+    try {
+        const res = await fetch(`${API_SEARCH}?part=snippet&channelId=${CHANNEL_ID}&type=video&maxResults=5&order=date&key=${API_KEY}`);
+        const data = await res.json();
+        if(data.error) throw data.error;
+        document.getElementById('channelRow').innerHTML = data.items.map(createVideoCard).join('');
+    } catch(e) {
+        console.error(e);
+        document.getElementById('channelRow').innerHTML = `<div class="error">Không tải được video kênh</div>`;
+    }
+}
+
+// ========== TẢI HÀNG 2: NHẠC HAY 2026 ==========
+async function loadMusicVideos() {
+    try {
+        const res = await fetch(`${API_SEARCH}?part=snippet&q=${encodeURIComponent('nhạc hay 2026')}&type=video&maxResults=5&videoCategoryId=10&key=${API_KEY}`);
+        const data = await res.json();
+        if(data.error) throw data.error;
+        document.getElementById('musicRow').innerHTML = data.items.map(createVideoCard).join('');
+    } catch(e) {
+        console.error(e);
+        document.getElementById('musicRow').innerHTML = `<div class="error">Không tải được nhạc</div>`;
+    }
+}
+
+// ========== TẢI HÀNG 3: TRENDING ==========
+async function loadTrending() {
+    try {
+        const res = await fetch(`${API_VIDEOS}?part=snippet&chart=mostPopular&regionCode=VN&maxResults=5&key=${API_KEY}`);
+        const data = await res.json();
+        if(data.error) throw data.error;
+        document.getElementById('trendingRow').innerHTML = data.items.map(createVideoCard).join('');
+    } catch(e) {
+        console.error(e);
+        document.getElementById('trendingRow').innerHTML = `<div class="error">Không tải được trending</div>`;
+    }
+}
+
+// ========== LẤY VIDEO LIÊN QUAN ==========
+async function loadRelated(videoId) {
+    try {
+        const res = await fetch(`${API_SEARCH}?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=15&key=${API_KEY}`);
+        const data = await res.json();
+        if(data.error) throw data.error;
+        document.getElementById('relatedList').innerHTML = data.items.map(createRelatedItem).join('');
+    } catch(e) {
+        console.error("Lỗi lấy video liên quan:", e);
+        // Fallback: tìm theo tên nếu relatedToVideoId lỗi
+        document.getElementById('relatedList').innerHTML = `<p style="color:#aaa">Không tải được video liên quan</p>`;
+    }
+}
+
+// ========== PHÁT VIDEO + CẬP NHẬT URL ==========
+function playVideo(videoId, title, channel) {
+    const slug = slugify(title);
+    // URL dạng: /watch/ID/tieu-de-da-ma-hoa
+    history.pushState({videoId, title, channel}, '', `/watch/${videoId}/${slug}`);
+    
+    // Cập nhật giao diện
+    showPage('watchPage');
+    document.getElementById('playerFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+    document.getElementById('watchTitle').textContent = title;
+    document.getElementById('watchChannel').textContent = channel;
+    
+    // Tải video liên quan
+    loadRelated(videoId);
+}
+
+// ========== TÌM KIẾM ==========
+function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    if(!q) return;
+    // Tạm thời: thay hàng nhạc hay bằng kết quả tìm kiếm
+    document.getElementById('musicRow').innerHTML = '<div class="loading">Đang tìm...</div>';
+    fetch(`${API_SEARCH}?part=snippet&q=${encodeURIComponent(q)}&type=video&maxResults=5&key=${API_KEY}`)
+        .then(r => r.json())
+        .then(data => {
+            if(data.error) throw data.error;
+            document.getElementById('musicRow').innerHTML = data.items.map(createVideoCard).join('');
+            document.querySelector('.section-title:nth-of-type(2)').textContent = `🔍 Kết quả: ${q}`;
+        })
+        .catch(e => alert("Lỗi tìm kiếm"));
+}
+
+// ========== XỬ LÝ URL KHI TẢI TRANG ==========
+function parseURL() {
+    const path = window.location.pathname;
+    if(path.startsWith('/watch/')) {
+        const parts = path.split('/').filter(Boolean);
+        if(parts.length >= 2) {
+            const videoId = parts[1];
+            const slug = parts[2] || '';
+            // Mở trang xem video - cần gọi API lấy title
+            fetch(`${API_SEARCH}?part=snippet&q=${videoId}&type=video&maxResults=1&key=${API_KEY}`)
+            .then(r => r.json())
+            .then(data => {
+                if(data.items?.[0]) {
+                    const s = data.items[0].snippet;
+                    showPage('watchPage');
+                    document.getElementById('playerFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                    document.getElementById('watchTitle').textContent = s.title;
+                    document.getElementById('watchChannel').textContent = s.channelTitle;
+                    loadRelated(videoId);
+                }
+            });
+            return true;
+        }
+    }
+    return false;
+}
+
+// ========== KHỞI ĐỘNG ==========
 window.onload = () => {
-    const params = new URLSearchParams(window.location.search);
-    const watchId = params.get("watch");
-    const slugTitle = params.get("title");
-
-    if (watchId && slugTitle) {
-        const originalTitle = unSlugify(slugTitle);
-        phatVideo(watchId, originalTitle, "YouTube", 0);
-        layVideoLienQuanTheoTen(originalTitle);
-    } else {
-        timKiemTuKhoa("nhạc mới 2026");
+    if(!parseURL()) {
+        loadChannelVideos();
+        loadMusicVideos();
+        loadTrending();
     }
 };
 
-// === TÌM KIẾM THEO TỪ KHÓA ===
-function searchNhac() {
-    let q = document.getElementById('q').value.trim();
-    if(!q) return;
-    timKiemTuKhoa(q);
-}
-
-function timKiemTuKhoa(tuKhoa) {
-    document.getElementById('listTitle').textContent = "🔍 Kết quả cho: " + tuKhoa;
-    fetch(`${API_URL}?part=snippet&q=${encodeURIComponent(tuKhoa)}&type=video&maxResults=12&key=${API_KEY}`)
-    .then(res => res.json())
-    .then(data => {
-        if(data.error) throw data.error;
-        if(!data.items || data.items.length === 0) {
-            document.getElementById('relatedList').innerHTML = "<p>Không tìm thấy kết quả.</p>";
-            return;
-        }
-        hienThiDanhSach(data.items);
-    })
-    .catch(err => {
-        console.error("Lỗi tìm kiếm:", err);
-        document.getElementById('relatedList').innerHTML = `<p class="error-msg">Lỗi: ${err.message}</p>`;
-    });
-}
-
-// === LẤY VIDEO LIÊN QUAN THEO TÊN ===
-function layVideoLienQuanTheoTen(tenVideo) {
-    document.getElementById('listTitle').textContent = "📺 Video liên quan đến: " + tenVideo;
-    const tuKhoaTimKiem = tenVideo.replace(/[^\w\s]/gi, ' ').trim();
-    
-    fetch(`${API_URL}?part=snippet&q=${encodeURIComponent(tuKhoaTimKiem)}&type=video&maxResults=12&key=${API_KEY}`)
-    .then(res => res.json())
-    .then(data => {
-        if(data.error) throw data.error;
-        if(!data.items || data.items.length === 0) {
-            document.getElementById('relatedList').innerHTML = "<p>ℹ️ Không tìm thấy video liên quan.</p>";
-            return;
-        }
-        hienThiDanhSach(data.items);
-    })
-    .catch(err => {
-        console.error("Lỗi:", err);
-        document.getElementById('relatedList').innerHTML = `<p class="error-msg">❌ ${err.message}</p>`;
-    });
-}
-
-// === HIỂN THỊ DANH SÁCH & LƯU VÀO BIẾN TOÀN CỤC ===
-function hienThiDanhSach(items) {
-    danhSachVideo = items; // Lưu danh sách vào biến toàn cục
-    viTriDangPhat = -1;
-    
-    let html = "";
-    items.forEach((item, index) => {
-        if(!item.id || !item.id.videoId) return;
-        const vId = item.id.videoId;
-        const s = item.snippet;
-        html += `
-        <div class="video-item" data-index="${index}" onclick="phatVideoTuList('${vId}', ${JSON.stringify(s.title).replace(/"/g,'&quot;')}, ${JSON.stringify(s.channelTitle).replace(/"/g,'&quot;')}, ${index})">
-            <img src="${s.thumbnails?.medium?.url || ''}" alt="">
-            <div class="meta">
-                <div class="title">${s.title}</div>
-                <div class="chan">${s.channelTitle}</div>
-            </div>
-        </div>`;
-    });
-    document.getElementById('relatedList').innerHTML = html || "<p>Không có video nào.</p>";
-}
-
-// === PHÁT VIDEO + CẬP NHẬT URL + ĐÁNH DẤU ĐANG PHÁT ===
-function phatVideoTuList(videoId, title, channel, index) {
-    const slug = slugify(title);
-    history.replaceState(null, "", `?watch=${videoId}&title=${slug}`);
-    phatVideo(videoId, title, channel, index);
-    layVideoLienQuanTheoTen(title);
-}
-
-// === PHÁT VIDEO TRONG KHUNG + THEO DÕI HẾT VIDEO ===
-function phatVideo(videoId, title, channel, index) {
-    viTriDangPhat = index; // Lưu vị trí đang phát
-    
-    // Tô màu bài đang phát
-    document.querySelectorAll('.video-item').forEach((el, i) => {
-        el.classList.toggle('playing', i === index);
-    });
-
-    // Thêm tham số enablejsapi=1 → BẮT BUỘC để theo dõi sự kiện kết thúc
-    const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1&origin=${window.location.origin}`;
-    document.getElementById('playerFrame').src = embedUrl;
-    document.getElementById('vidTitle').textContent = title;
-    document.getElementById('vidChannel').textContent = channel;
-}
-
-// === TỰ ĐỘNG PHÁT BÀI TIẾP THEO KHI HẾT VIDEO ===
-// Giao tiếp với iframe YouTube qua window.postMessage
-window.addEventListener('message', function(event) {
-    try {
-        const data = JSON.parse(event.data);
-        // Khi video kết thúc → trạng thái = 0
-        if (data.event === 'onStateChange' && data.info === 0) {
-            phatBaiTiepTheo();
-        }
-    } catch(e) {}
-});
-
-// === CHUYỂN BÀI TIẾP THEO ===
-function phatBaiTiepTheo() {
-    if (danhSachVideo.length === 0) return;
-    const viTriTiepTheo = viTriDangPhat + 1;
-    
-    // Nếu hết danh sách → quay lại bài đầu tiên / dừng
-    if (viTriTiepTheo >= danhSachVideo.length) {
-        // Bạn có thể đổi thành: viTriTiepTheo = 0; để lặp lại từ đầu
-        console.log("✅ Đã hết danh sách!");
-        return;
-    }
-
-    const baiMoi = danhSachVideo[viTriTiepTheo];
-    if(!baiMoi.id || !baiMoi.id.videoId) return;
-    
-    phatVideo(
-        baiMoi.id.videoId,
-        baiMoi.snippet.title,
-        baiMoi.snippet.channelTitle,
-        viTriTiepTheo
-    );
-    
-    // Cập nhật URL
-    const slug = slugify(baiMoi.snippet.title);
-    history.replaceState(null, "", `?watch=${baiMoi.id.videoId}&title=${slug}`);
-    
-    // Cuộn danh sách đến bài đang phát
-    document.querySelector(`.video-item[data-index="${viTriTiepTheo}"]`)?.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-// === NÚT QUAY/LÙI TRÌNH DUYỆT ===
-window.addEventListener('popstate', () => {
-    const params = new URLSearchParams(window.location.search);
-    const watchId = params.get("watch");
-    const slugTitle = params.get("title");
-    if (watchId && slugTitle) {
-        const originalTitle = unSlugify(slugTitle);
-        phatVideo(watchId, originalTitle, "YouTube", 0);
-        layVideoLienQuanTheoTen(originalTitle);
+// Xử lý nút quay/lùi
+window.addEventListener('popstate', (e) => {
+    if(e.state?.videoId) {
+        showPage('watchPage');
+        document.getElementById('playerFrame').src = `https://www.youtube.com/embed/${e.state.videoId}?autoplay=1&rel=0`;
+        document.getElementById('watchTitle').textContent = e.state.title;
+        document.getElementById('watchChannel').textContent = e.state.channel;
+        loadRelated(e.state.videoId);
+    } else {
+        showPage('homePage');
     }
 });
 
-// === NHẤN ENTER TÌM KIẾM ===
-document.getElementById('q').addEventListener('keydown', e => {
-    if(e.key === 'Enter') searchNhac();
-});
+// Enter tìm kiếm
+document.getElementById('searchInput').addEventListener('keydown', e => e.key === 'Enter' && doSearch());
 </script>
 </body>
 </html>
