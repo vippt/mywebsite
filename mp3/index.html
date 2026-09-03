@@ -124,7 +124,7 @@ function searchNhac() {
 
 function timKiemTuKhoa(tuKhoa) {
     document.getElementById('listTitle').textContent = "🔍 Kết quả cho: " + tuKhoa;
-    fetch(`${API_URL}?part=snippet&q=${encodeURIComponent(tuKhoa)}&type=video&maxResults=12&key=${API_KEY}`)
+    fetch(`${API_URL}?part=snippet&q=${encodeURIComponent(tuKhoa)}&type=video&videoCategoryId=10&maxResults=12&key=${API_KEY}`)
     .then(res => res.json())
     .then(data => {
         if(data.error) throw data.error;
@@ -140,24 +140,24 @@ function timKiemTuKhoa(tuKhoa) {
     });
 }
 
-// === ✅ GỌI VIDEO LIÊN QUAN ĐÚNG ĐỊNH DẠNG API ===
+// === ✅ ĐÚNG ĐỊNH DẠNG API BẮT BUỘC ===
 function layVideoLienQuanTheoId(videoId, tenVideo) {
     document.getElementById('listTitle').textContent = "📺 Video liên quan đến: " + tenVideo;
 
-    // ✅ ĐÚNG QUY TẮC: KHÔNG có tham số q, BẮT BUỘC có type=video
+    // ⚠️ BẮT BUỘC: relatedToVideoId + type=video + KHÔNG có q
     const url = `${API_URL}?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=12&key=${API_KEY}`;
 
-    console.log("Gọi API:", url);
+    console.log("🔗 Gọi API:", url);
 
     fetch(url)
     .then(res => res.json())
     .then(data => {
+        console.log("📩 Phản hồi API:", data);
+        
         if(data.error) {
-            console.error("Lỗi API trả về:", data.error);
-            throw new Error(data.error.message || "Lỗi từ YouTube API");
+            console.error("❌ Lỗi API trả về:", data.error);
+            throw new Error(data.error.message);
         }
-
-        console.log("Kết quả thành công:", data);
 
         if(!data.items || data.items.length === 0) {
             document.getElementById('relatedList').innerHTML = "<p>ℹ️ Không có video liên quan nào.</p>";
@@ -166,7 +166,7 @@ function layVideoLienQuanTheoId(videoId, tenVideo) {
         hienThiDanhSach(data.items);
     })
     .catch(err => {
-        console.error("Lỗi:", err);
+        console.error("❌ Lỗi chi tiết:", err);
         document.getElementById('relatedList').innerHTML = `<p class="error-msg">❌ ${err.message}</p>`;
     });
 }
