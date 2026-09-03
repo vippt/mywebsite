@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nghe Nhạc</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #1a73e8, #5ea4f3); height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .player-box { background: white; padding: 30px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); text-align: center; width: 90%; max-width: 400px; }
+        h2 { color: #1a73e8; margin-bottom: 20px; font-size: 18px; }
+        .player-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; }
+        .player-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        /* Ẩn video chỉ để phát âm thanh */
+        .hide-video { position: relative; height: 60px; overflow: hidden; border-radius: 8px; }
+        .hide-video iframe { position: absolute; top: -280px; height: 340px; }
+    </style>
+</head>
+<body>
+
+<div class="player-box">
+    <h2 id="videoTitle">🎵 Đang phát...</h2>
+    <div class="player-container hide-video">
+        <iframe id="ytPlayer" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    </div>
+    <p style="margin-top: 15px; color: #666; font-size: 14px;">Chỉ phát âm thanh ▶</p>
+</div>
+
+<script>
+    // Lấy ID video từ URL
+    const params = new URLSearchParams(window.location.search);
+    const videoId = params.get("watch");
+
+    if (videoId) {
+        // Phát nhạc với chế độ phát nhúng
+        document.getElementById("ytPlayer").src = 
+            `https://www.youtube.com/embed/${videoId}?autoplay=1&start=0&rel=0&modestbranding=1`;
+    } else {
+        alert("Thiếu ID video!");
+        window.location.href = "index.html";
+    }
+</script>
+
+</body>
+</html>
