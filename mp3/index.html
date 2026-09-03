@@ -109,7 +109,8 @@ window.onload = () => {
     if (watchId && slugTitle) {
         const originalTitle = unSlugify(slugTitle);
         phatVideo(watchId, originalTitle, "YouTube");
-        layVideoLienQuanTheoId(watchId, originalTitle);
+        // ✅ Tìm video LIÊN QUAN THEO TÊN BÀI HÁT → KHÔNG DÙNG relatedToVideoId → KHÔNG BỊ LỖI
+        layVideoLienQuanTheoTen(originalTitle);
     } else {
         timKiemTuKhoa("nhạc mới 2026");
     }
@@ -124,7 +125,7 @@ function searchNhac() {
 
 function timKiemTuKhoa(tuKhoa) {
     document.getElementById('listTitle').textContent = "🔍 Kết quả cho: " + tuKhoa;
-    fetch(`${API_URL}?part=snippet&q=${encodeURIComponent(tuKhoa)}&type=video&videoCategoryId=10&maxResults=12&key=${API_KEY}`)
+    fetch(`${API_URL}?part=snippet&q=${encodeURIComponent(tuKhoa)}&type=video&maxResults=12&key=${API_KEY}`)
     .then(res => res.json())
     .then(data => {
         if(data.error) throw data.error;
@@ -140,33 +141,28 @@ function timKiemTuKhoa(tuKhoa) {
     });
 }
 
-// === ✅ ĐÚNG ĐỊNH DẠNG API BẮT BUỘC ===
-function layVideoLienQuanTheoId(videoId, tenVideo) {
+// === ✅ LẤY VIDEO LIÊN QUAN THEO TÊN BÀI HÁT → KHÔNG BỊ LỖI ===
+function layVideoLienQuanTheoTen(tenVideo) {
     document.getElementById('listTitle').textContent = "📺 Video liên quan đến: " + tenVideo;
 
-    // ⚠️ BẮT BUỘC: relatedToVideoId + type=video + KHÔNG có q
-    const url = `${API_URL}?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=12&key=${API_KEY}`;
-
-    console.log("🔗 Gọi API:", url);
-
-    fetch(url)
+    // ✅ Lấy từ khóa chính (bỏ dấu, lấy vài từ đầu) → tìm kiếm theo tên
+    const tuKhoaTimKiem = tenVideo.replace(/[^\w\s]/gi, ' ').trim();
+    
+    fetch(`${API_URL}?part=snippet&q=${encodeURIComponent(tuKhoaTimKiem)}&type=video&maxResults=12&key=${API_KEY}`)
     .then(res => res.json())
     .then(data => {
-        console.log("📩 Phản hồi API:", data);
-        
         if(data.error) {
-            console.error("❌ Lỗi API trả về:", data.error);
+            console.error("Lỗi API:", data.error);
             throw new Error(data.error.message);
         }
-
         if(!data.items || data.items.length === 0) {
-            document.getElementById('relatedList').innerHTML = "<p>ℹ️ Không có video liên quan nào.</p>";
+            document.getElementById('relatedList').innerHTML = "<p>ℹ️ Không tìm thấy video liên quan.</p>";
             return;
         }
         hienThiDanhSach(data.items);
     })
     .catch(err => {
-        console.error("❌ Lỗi chi tiết:", err);
+        console.error("Lỗi:", err);
         document.getElementById('relatedList').innerHTML = `<p class="error-msg">❌ ${err.message}</p>`;
     });
 }
@@ -195,7 +191,8 @@ function phatVideoTuList(videoId, title, channel) {
     const slug = slugify(title);
     history.replaceState(null, "", `?watch=${videoId}&title=${slug}`);
     phatVideo(videoId, title, channel);
-    layVideoLienQuanTheoId(videoId, title);
+    // ✅ Tải video liên quan theo tên bài hát VỪA CHỌN
+    layVideoLienQuanTheoTen(title);
 }
 
 function phatVideo(videoId, title, channel) {
@@ -213,7 +210,7 @@ window.addEventListener('popstate', () => {
     if (watchId && slugTitle) {
         const originalTitle = unSlugify(slugTitle);
         phatVideo(watchId, originalTitle, "YouTube");
-        layVideoLienQuanTheoId(watchId, originalTitle);
+        layVideoLienQuanTheoTen(originalTitle);
     }
 });
 
