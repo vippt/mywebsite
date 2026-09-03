@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm kiếm & Nghe Nhạc</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f2f5; padding: 20px; max-width: 800px; margin: 0 auto; }
+        h1 { text-align: center; color: #1a73e8; margin-bottom: 30px; }
+        .search-box { display: flex; gap: 10px; margin-bottom: 30px; }
+        input { flex: 1; padding: 12px; font-size: 16px; border: 2px solid #ddd; border-radius: 8px; }
+        button { padding: 12px 24px; background: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #1557b0; }
+        h2 { color: #333; margin: 30px 0 15px; font-size: 18px; border-left: 4px solid #1a73e8; padding-left: 10px; }
+        .song-item { background: white; padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .song-item:hover { background: #e8f0fe; transform: translateX(5px); }
+        .song-title { font-weight: bold; color: #202124; }
+        .song-channel { font-size: 14px; color: #5f6368; margin-top: 4px; }
+    </style>
+</head>
+<body>
+
+<h1>🎵 Nghe Nhạc Online</h1>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Tìm tên bài hát, ca sĩ...">
+    <button onclick="searchMusic()">Tìm</button>
+</div>
+
+<!-- Danh sách nhạc mới 2026 -->
+<h2>🔥 Nhạc mới 2026</h2>
+<div id="newMusicList"></div>
+
+<!-- Kết quả tìm kiếm -->
+<h2>Kết quả tìm kiếm</h2>
+<div id="resultList"></div>
+
+<script>
+    const API_KEY = "AIzaSyBna3fWAUyMfy4khuYSJEG1r6lHYIBTqVo";
+    const BASE_URL = "https://www.googleapis.com/youtube/v3/search";
+    const PLAYER_URL = "mp3.html"; // Trang phát nhạc của bạn
+
+    // Tự tải nhạc mới 2026 khi mở trang
+    window.onload = () => {
+        searchMusic("nhạc mới 2026", "newMusicList");
+    };
+
+    function searchMusic(keyword = null, targetId = "resultList") {
+        let q = keyword || document.getElementById("searchInput").value.trim();
+        if (!q) return alert("Nhập từ khóa tìm kiếm!");
+
+        fetch(`${BASE_URL}?part=snippet&q=${encodeURIComponent(q)}&type=video&videoCategoryId=10&maxResults=15&key=${API_KEY}`)
+            .then(res => res.json())
+            .then(data => {
+                let html = "";
+                data.items.forEach(item => {
+                    const videoId = item.id.videoId;
+                    const title = item.snippet.title.replace(/&quot;/g, '"');
+                    const channel = item.snippet.channelTitle;
+                    // Mở trang phát nhạc với ID video
+                    html += `
+                    <div class="song-item" onclick="playMusic('${videoId}')">
+                        <div class="song-title">${title}</div>
+                        <div class="song-channel">${channel}</div>
+                    </div>`;
+                });
+                document.getElementById(targetId).innerHTML = html;
+            })
+            .catch(err => alert("Lỗi: " + err));
+    }
+
+    // Chuyển sang trang phát nhạc
+    function playMusic(videoId) {
+        window.open(`${PLAYER_URL}?watch=${videoId}`, "_blank");
+    }
+</script>
+</body>
+</html>
