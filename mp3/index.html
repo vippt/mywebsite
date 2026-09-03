@@ -117,13 +117,14 @@ window.onload = () => {
     if (watchId && slugTitle) {
         const originalTitle = unSlugify(slugTitle);
         phatVideo(watchId, originalTitle, "YouTube");
-        layVideoLienQuan(watchId, originalTitle);
+        // ✅ Dùng API lấy video LIÊN QUAN theo ID, KHÔNG theo từ khóa
+        layVideoLienQuanTheoId(watchId, originalTitle);
     } else {
         timKiemTuKhoa("nhạc mới 2026");
     }
 };
 
-// === TÌM KIẾM THEO TỪ KHÓA ===
+// === 🔍 TÌM KIẾM THEO TỪ KHÓA ===
 function searchNhac() {
     let q = document.getElementById('q').value.trim();
     if(!q) return;
@@ -147,10 +148,10 @@ function timKiemTuKhoa(tuKhoa) {
     });
 }
 
-// === LẤY VIDEO LIÊN QUAN ===
-function layVideoLienQuan(videoId, tenVideo) {
+// === 📺 LẤY VIDEO LIÊN QUAN BẰNG relatedToVideoId ===
+function layVideoLienQuanTheoId(videoId, tenVideo) {
     document.getElementById('listTitle').textContent = "📺 Video liên quan đến: " + tenVideo;
-    // Dùng relatedToVideoId để lấy video liên quan chính xác
+    // ✅ Dùng ĐÚNG API: relatedToVideoId, KHÔNG truyền q=từ khóa nào
     fetch(`${API_URL}?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=12&key=${API_KEY}`)
     .then(res => res.json())
     .then(data => {
@@ -189,8 +190,8 @@ function phatVideoTuList(videoId, title, channel) {
     const slug = slugify(title);
     history.replaceState(null, "", `?watch=${videoId}&title=${slug}`);
     phatVideo(videoId, title, channel);
-    // Tải video liên quan cho video VỪA CHỌN
-    layVideoLienQuan(videoId, title);
+    // ✅ Nhấn video nào → lấy liên quan theo ID video đó
+    layVideoLienQuanTheoId(videoId, title);
 }
 
 function phatVideo(videoId, title, channel) {
@@ -208,7 +209,7 @@ window.addEventListener('popstate', () => {
     if (watchId && slugTitle) {
         const originalTitle = unSlugify(slugTitle);
         phatVideo(watchId, originalTitle, "YouTube");
-        layVideoLienQuan(watchId, originalTitle);
+        layVideoLienQuanTheoId(watchId, originalTitle);
     }
 });
 
