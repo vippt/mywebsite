@@ -33,6 +33,7 @@
         .video-item .meta {flex:1;}
         .video-item .title {font-size:13px; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
         .video-item .chan {font-size:12px; color:#aaa; margin-top:4px;}
+        .error-msg {color:#ff6b6b; font-size:13px; padding:10px;}
 
         /* Responsive di động */
         @media (max-width:900px) {
@@ -117,7 +118,6 @@ window.onload = () => {
     if (watchId && slugTitle) {
         const originalTitle = unSlugify(slugTitle);
         phatVideo(watchId, originalTitle, "YouTube");
-        // ✅ Dùng API lấy video LIÊN QUAN theo ID, KHÔNG theo từ khóa
         layVideoLienQuanTheoId(watchId, originalTitle);
     } else {
         timKiemTuKhoa("nhạc mới 2026");
@@ -136,6 +136,7 @@ function timKiemTuKhoa(tuKhoa) {
     fetch(`${API_URL}?part=snippet&q=${encodeURIComponent(tuKhoa)}&type=video&maxResults=12&key=${API_KEY}`)
     .then(res => res.json())
     .then(data => {
+        if(data.error) throw data.error;
         if(!data.items || data.items.length === 0) {
             document.getElementById('relatedList').innerHTML = "<p>Không tìm thấy kết quả.</p>";
             return;
@@ -143,27 +144,40 @@ function timKiemTuKhoa(tuKhoa) {
         hienThiDanhSach(data.items);
     })
     .catch(err => {
-        console.error(err);
-        alert("Lỗi kết nối API, vui lòng thử lại.");
+        console.error("Lỗi tìm kiếm:", err);
+        document.getElementById('relatedList').innerHTML = `<p class="error-msg">Lỗi: ${err.message || "Không thể tải dữ liệu"}</p>`;
     });
 }
 
-// === 📺 LẤY VIDEO LIÊN QUAN BẰNG relatedToVideoId ===
+// === 📺 LẤY VIDEO LIÊN QUAN theo ID ===
 function layVideoLienQuanTheoId(videoId, tenVideo) {
     document.getElementById('listTitle').textContent = "📺 Video liên quan đến: " + tenVideo;
-    // ✅ Dùng ĐÚNG API: relatedToVideoId, KHÔNG truyền q=từ khóa nào
-    fetch(`${API_URL}?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=12&key=${API_KEY}`)
+    
+    // ✅ ĐÚNG CÔNG THỨC API: KHÔNG có q, BẮT BUỘC có type=video
+    const url = `${API_URL}?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=12&key=${API_KEY}`;
+    
+    console.log("Gọi API video liên quan:", url); // Ghi log để kiểm tra
+    
+    fetch(url)
     .then(res => res.json())
     .then(data => {
+        // Bắt lỗi API trả về rõ ràng
+        if(data.error) {
+            console.error("Lỗi API:", data.error);
+            throw new Error(data.error.message || "Lỗi từ YouTube API");
+        }
+        
+        console.log("Kết quả video liên quan:", data); // Xem phản hồi thực tế
+        
         if(!data.items || data.items.length === 0) {
-            document.getElementById('relatedList').innerHTML = "<p>Không có video liên quan.</p>";
+            document.getElementById('relatedList').innerHTML = "<p>ℹ️ Không có video liên quan (hoặc API không trả về kết quả).</p>";
             return;
         }
         hienThiDanhSach(data.items);
     })
     .catch(err => {
-        console.error(err);
-        document.getElementById('relatedList').innerHTML = "<p>Lỗi tải video liên quan.</p>";
+        console.error("Lỗi lấy video liên quan:", err);
+        document.getElementById('relatedList').innerHTML = `<p class="error-msg">❌ Lỗi: ${err.message}</p>`;
     });
 }
 
@@ -171,18 +185,21 @@ function layVideoLienQuanTheoId(videoId, tenVideo) {
 function hienThiDanhSach(items) {
     let html = "";
     items.forEach(item => {
+        // Bảo đảm có videoId trước khi hiển thị
+        if(!item.id || !item.id.videoId) return;
+        
         const vId = item.id.videoId;
         const s = item.snippet;
         html += `
         <div class="video-item" onclick="phatVideoTuList('${vId}', ${JSON.stringify(s.title).replace(/"/g,'&quot;')}, ${JSON.stringify(s.channelTitle).replace(/"/g,'&quot;')})">
-            <img src="${s.thumbnails.medium.url}" alt="">
+            <img src="${s.thumbnails?.medium?.url || ''}" alt="">
             <div class="meta">
                 <div class="title">${s.title}</div>
                 <div class="chan">${s.channelTitle}</div>
             </div>
         </div>`;
     });
-    document.getElementById('relatedList').innerHTML = html;
+    document.getElementById('relatedList').innerHTML = html || "<p>Không có video nào.</p>";
 }
 
 // === PHÁT VIDEO + CẬP NHẬT URL ===
@@ -190,7 +207,6 @@ function phatVideoTuList(videoId, title, channel) {
     const slug = slugify(title);
     history.replaceState(null, "", `?watch=${videoId}&title=${slug}`);
     phatVideo(videoId, title, channel);
-    // ✅ Nhấn video nào → lấy liên quan theo ID video đó
     layVideoLienQuanTheoId(videoId, title);
 }
 
