@@ -16,7 +16,6 @@
 
         .container {display:flex; gap:16px; padding:16px; max-width:1400px; margin:0 auto;}
 
-        /* === Khung phát bên trái === */
         .player-section {flex:2;}
         .player-wrapper {position:relative; width:100%; padding-bottom:56.25%; border-radius:10px; overflow:hidden; background:#000;}
         .player-wrapper iframe {position:absolute; top:0; left:0; width:100%; height:100%; border:none;}
@@ -24,7 +23,6 @@
         .player-info h2 {font-size:16px; line-height:1.4;}
         .player-info p {color:#aaa; font-size:13px; margin-top:4px;}
 
-        /* === Danh sách bên phải === */
         .related-section {flex:1; min-width:320px;}
         .related-section h3 {font-size:15px; margin-bottom:12px; color:#e2e2e2;}
         .video-item {display:flex; gap:10px; margin-bottom:10px; cursor:pointer; border-radius:6px; padding:4px;}
@@ -35,7 +33,6 @@
         .video-item .chan {font-size:12px; color:#aaa; margin-top:4px;}
         .error-msg {color:#ff6b6b; font-size:13px; padding:10px;}
 
-        /* Responsive di động */
         @media (max-width:900px) {
             .container {flex-direction:column;}
             .search-bar {flex:1; min-width:180px;}
@@ -53,7 +50,6 @@
 </header>
 
 <div class="container">
-    <!-- Khung phát bên trái -->
     <div class="player-section">
         <div class="player-wrapper">
             <iframe id="playerFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -64,7 +60,6 @@
         </div>
     </div>
 
-    <!-- Danh sách bên phải -->
     <div class="related-section">
         <h3 id="listTitle">🔥 Nhạc mới 2026</h3>
         <div id="relatedList"></div>
@@ -72,11 +67,10 @@
 </div>
 
 <script>
-// === API Key của bạn ===
 const API_KEY = "AIzaSyBna3fWAUyMfy4khuYSJEG1r6lHYIBTqVo";
 const API_URL = "https://www.googleapis.com/youtube/v3/search";
 
-// === CHUYỂN TIẾNG VIỆT → KHÔNG DẤU, KHOẢNG CÁCH → GẠCH NGANG ===
+// Chuyển tiếng Việt → không dấu + gạch ngang
 function slugify(text) {
     const map = {
         'á':'a','à':'a','ả':'a','ã':'a','ạ':'a','ă':'a','ắ':'a','ằ':'a','ẳ':'a','ẵ':'a','ặ':'a',
@@ -98,18 +92,15 @@ function slugify(text) {
         'Ý':'Y','Ỳ':'Y','Ỷ':'Y','Ỹ':'Y','Ỵ':'Y',
         'Đ':'D'
     };
-    return text.split('').map(c => map[c] || c)
-        .join('')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
+    return text.split('').map(c => map[c] || c).join('').toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
 function unSlugify(slug) {
     return slug.replace(/-/g, ' ');
 }
 
-// === KHỞI ĐỘNG ===
+// Khởi động
 window.onload = () => {
     const params = new URLSearchParams(window.location.search);
     const watchId = params.get("watch");
@@ -124,7 +115,7 @@ window.onload = () => {
     }
 };
 
-// === 🔍 TÌM KIẾM THEO TỪ KHÓA ===
+// Tìm kiếm theo từ khóa
 function searchNhac() {
     let q = document.getElementById('q').value.trim();
     if(!q) return;
@@ -145,49 +136,46 @@ function timKiemTuKhoa(tuKhoa) {
     })
     .catch(err => {
         console.error("Lỗi tìm kiếm:", err);
-        document.getElementById('relatedList').innerHTML = `<p class="error-msg">Lỗi: ${err.message || "Không thể tải dữ liệu"}</p>`;
+        document.getElementById('relatedList').innerHTML = `<p class="error-msg">Lỗi: ${err.message}</p>`;
     });
 }
 
-// === 📺 LẤY VIDEO LIÊN QUAN theo ID ===
+// === ✅ GỌI VIDEO LIÊN QUAN ĐÚNG ĐỊNH DẠNG API ===
 function layVideoLienQuanTheoId(videoId, tenVideo) {
     document.getElementById('listTitle').textContent = "📺 Video liên quan đến: " + tenVideo;
-    
-    // ✅ ĐÚNG CÔNG THỨC API: KHÔNG có q, BẮT BUỘC có type=video
+
+    // ✅ ĐÚNG QUY TẮC: KHÔNG có tham số q, BẮT BUỘC có type=video
     const url = `${API_URL}?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=12&key=${API_KEY}`;
-    
-    console.log("Gọi API video liên quan:", url); // Ghi log để kiểm tra
-    
+
+    console.log("Gọi API:", url);
+
     fetch(url)
     .then(res => res.json())
     .then(data => {
-        // Bắt lỗi API trả về rõ ràng
         if(data.error) {
-            console.error("Lỗi API:", data.error);
+            console.error("Lỗi API trả về:", data.error);
             throw new Error(data.error.message || "Lỗi từ YouTube API");
         }
-        
-        console.log("Kết quả video liên quan:", data); // Xem phản hồi thực tế
-        
+
+        console.log("Kết quả thành công:", data);
+
         if(!data.items || data.items.length === 0) {
-            document.getElementById('relatedList').innerHTML = "<p>ℹ️ Không có video liên quan (hoặc API không trả về kết quả).</p>";
+            document.getElementById('relatedList').innerHTML = "<p>ℹ️ Không có video liên quan nào.</p>";
             return;
         }
         hienThiDanhSach(data.items);
     })
     .catch(err => {
-        console.error("Lỗi lấy video liên quan:", err);
-        document.getElementById('relatedList').innerHTML = `<p class="error-msg">❌ Lỗi: ${err.message}</p>`;
+        console.error("Lỗi:", err);
+        document.getElementById('relatedList').innerHTML = `<p class="error-msg">❌ ${err.message}</p>`;
     });
 }
 
-// === HIỂN THỊ DANH SÁCH ===
+// Hiển thị danh sách
 function hienThiDanhSach(items) {
     let html = "";
     items.forEach(item => {
-        // Bảo đảm có videoId trước khi hiển thị
         if(!item.id || !item.id.videoId) return;
-        
         const vId = item.id.videoId;
         const s = item.snippet;
         html += `
@@ -202,7 +190,7 @@ function hienThiDanhSach(items) {
     document.getElementById('relatedList').innerHTML = html || "<p>Không có video nào.</p>";
 }
 
-// === PHÁT VIDEO + CẬP NHẬT URL ===
+// Phát video + cập nhật URL
 function phatVideoTuList(videoId, title, channel) {
     const slug = slugify(title);
     history.replaceState(null, "", `?watch=${videoId}&title=${slug}`);
