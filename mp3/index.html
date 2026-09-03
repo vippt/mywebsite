@@ -171,7 +171,7 @@ function createRelatedItem(item) {
 // ========== TẢI HÀNG 1: VIDEO KÊNH ==========
 // Lưu ý: Thay CHANNEL_ID bằng ID kênh mong muốn
 async function loadChannelVideos() {
-    const CHANNEL_ID = "UC-9-kyTW8ZkZNDHQJ6FgpwQ"; // Kênh nhạc YouTube
+    const CHANNEL_ID = "UCLCRwRXKsfzHPBIGD1taWoA"; // Kênh nhạc YouTube
     try {
         const res = await fetch(`${API_SEARCH}?part=snippet&channelId=${CHANNEL_ID}&type=video&maxResults=5&order=date&key=${API_KEY}`);
         const data = await res.json();
