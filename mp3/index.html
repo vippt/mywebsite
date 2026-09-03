@@ -24,7 +24,7 @@
         .player-info h2 {font-size:16px; line-height:1.4;}
         .player-info p {color:#aaa; font-size:13px; margin-top:4px;}
 
-        /* === Danh sách liên quan bên phải === */
+        /* === Danh sách bên phải === */
         .related-section {flex:1; min-width:320px;}
         .related-section h3 {font-size:15px; margin-bottom:12px; color:#e2e2e2;}
         .video-item {display:flex; gap:10px; margin-bottom:10px; cursor:pointer; border-radius:6px; padding:4px;}
@@ -52,7 +52,7 @@
 </header>
 
 <div class="container">
-    <!-- Khung phát giống YouTube -->
+    <!-- Khung phát bên trái -->
     <div class="player-section">
         <div class="player-wrapper">
             <iframe id="playerFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <!-- Danh sách video liên quan / kết quả tìm kiếm -->
+    <!-- Danh sách bên phải -->
     <div class="related-section">
         <h3 id="listTitle">🔥 Nhạc mới 2026</h3>
         <div id="relatedList"></div>
@@ -74,8 +74,6 @@
 // === API Key của bạn ===
 const API_KEY = "AIzaSyBna3fWAUyMfy4khuYSJEG1r6lHYIBTqVo";
 const API_URL = "https://www.googleapis.com/youtube/v3/search";
-
-let currentKeyword = "nhạc mới 2026";
 
 // === CHUYỂN TIẾNG VIỆT → KHÔNG DẤU, KHOẢNG CÁCH → GẠCH NGANG ===
 function slugify(text) {
@@ -102,42 +100,37 @@ function slugify(text) {
     return text.split('').map(c => map[c] || c)
         .join('')
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')  // Ký tự đặc biệt → gạch ngang
-        .replace(/^-+|-+$/g, '');      // Xóa gạch ngang thừa ở đầu/cuối
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
 }
 
-// === CHUYỂN SLUG → LẠI TIẾNG VIỆT ĐỂ TÌM KIẾM ===
 function unSlugify(slug) {
     return slug.replace(/-/g, ' ');
 }
 
-// === KHỞI ĐỘNG: Đọc URL & tải danh sách ===
+// === KHỞI ĐỘNG ===
 window.onload = () => {
     const params = new URLSearchParams(window.location.search);
     const watchId = params.get("watch");
     const slugTitle = params.get("title");
 
     if (watchId && slugTitle) {
-        // Có ID + title trong URL → giải mã title & hiển thị làm tiêu đề danh sách
         const originalTitle = unSlugify(slugTitle);
-        document.getElementById('listTitle').textContent = "🔍 Kết quả cho: " + originalTitle;
         phatVideo(watchId, originalTitle, "YouTube");
-        timKiem(originalTitle);
+        layVideoLienQuan(watchId, originalTitle);
     } else {
-        // Không có ID → tải nhạc mới 2026
-        timKiem("nhạc mới 2026");
+        timKiemTuKhoa("nhạc mới 2026");
     }
 };
 
-// === Tìm kiếm ===
+// === TÌM KIẾM THEO TỪ KHÓA ===
 function searchNhac() {
     let q = document.getElementById('q').value.trim();
     if(!q) return;
-    timKiem(q);
+    timKiemTuKhoa(q);
 }
 
-function timKiem(tuKhoa) {
-    currentKeyword = tuKhoa;
+function timKiemTuKhoa(tuKhoa) {
     document.getElementById('listTitle').textContent = "🔍 Kết quả cho: " + tuKhoa;
     fetch(`${API_URL}?part=snippet&q=${encodeURIComponent(tuKhoa)}&type=video&maxResults=12&key=${API_KEY}`)
     .then(res => res.json())
@@ -151,6 +144,25 @@ function timKiem(tuKhoa) {
     .catch(err => {
         console.error(err);
         alert("Lỗi kết nối API, vui lòng thử lại.");
+    });
+}
+
+// === LẤY VIDEO LIÊN QUAN ===
+function layVideoLienQuan(videoId, tenVideo) {
+    document.getElementById('listTitle').textContent = "📺 Video liên quan đến: " + tenVideo;
+    // Dùng relatedToVideoId để lấy video liên quan chính xác
+    fetch(`${API_URL}?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=12&key=${API_KEY}`)
+    .then(res => res.json())
+    .then(data => {
+        if(!data.items || data.items.length === 0) {
+            document.getElementById('relatedList').innerHTML = "<p>Không có video liên quan.</p>";
+            return;
+        }
+        hienThiDanhSach(data.items);
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById('relatedList').innerHTML = "<p>Lỗi tải video liên quan.</p>";
     });
 }
 
@@ -172,18 +184,15 @@ function hienThiDanhSach(items) {
     document.getElementById('relatedList').innerHTML = html;
 }
 
-// === PHÁT + CẬP NHẬT URL (KHÔNG TẢI LẠI TRANG) ===
+// === PHÁT VIDEO + CẬP NHẬT URL ===
 function phatVideoTuList(videoId, title, channel) {
-    // Chuyển tiếng Việt → dạng slug cho URL sạch đẹp
     const slug = slugify(title);
-    // Cập nhật thanh địa chỉ: ?watch=ID&title=chuan-hoa-khong-dau
     history.replaceState(null, "", `?watch=${videoId}&title=${slug}`);
-    // Cập nhật tiêu đề danh sách thành tên bài hát vừa nhấn
-    document.getElementById('listTitle').textContent = "🔍 Kết quả cho: " + title;
     phatVideo(videoId, title, channel);
+    // Tải video liên quan cho video VỪA CHỌN
+    layVideoLienQuan(videoId, title);
 }
 
-// === Chỉ phát video trong khung ===
 function phatVideo(videoId, title, channel) {
     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
     document.getElementById('playerFrame').src = embedUrl;
@@ -191,15 +200,15 @@ function phatVideo(videoId, title, channel) {
     document.getElementById('vidChannel').textContent = channel;
 }
 
-// Nhấn nút quay/lùi trình duyệt vẫn hoạt động
+// Nút quay/lùi trình duyệt
 window.addEventListener('popstate', () => {
     const params = new URLSearchParams(window.location.search);
     const watchId = params.get("watch");
     const slugTitle = params.get("title");
     if (watchId && slugTitle) {
         const originalTitle = unSlugify(slugTitle);
-        document.getElementById('listTitle').textContent = "🔍 Kết quả cho: " + originalTitle;
         phatVideo(watchId, originalTitle, "YouTube");
+        layVideoLienQuan(watchId, originalTitle);
     }
 });
 
