@@ -5,57 +5,150 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video - YouTube Clone</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
-        body { background: #0f0f0f; color: #fff; padding: 20px; }
-        .video-player { max-width: 1000px; margin: 0 auto 30px; }
-        iframe { width: 100%; height: 500px; border-radius: 12px; border: none; }
-        .related-section { max-width: 1000px; margin: 0 auto; }
-        .video-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-top: 15px; }
-        .video-card { cursor: pointer; border-radius: 8px; overflow: hidden; transition: 0.2s; }
-        .video-card:hover { transform: scale(1.03); }
-        .video-card img { width: 100%; height: 120px; object-fit: cover; background: #272727; }
-        .video-title {
-    padding: 8px;
-    font-size: 14px;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2; /* Hiển thị tối đa 2 dòng */
-    overflow: hidden;       /* Ẩn phần chữ thừa */
-    text-overflow: ellipsis;/* Thêm dấu ... ở cuối */
-    min-height: 40px;       /* Đảm bảo khung đồng đều chiều cao */
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Roboto', Arial, sans-serif; }
+        body { background: #0f0f0f; color: #fff; padding: 24px; max-width: 100%; }
 
+        /* ===== THANH TÌM KIẾM ===== */
+        .search-container { max-width: 640px; margin: 0 auto 32px; display: flex; gap: 0; align-items: center; }
+        #searchInput { 
+            flex: 1; padding: 10px 16px; border-radius: 24px 0 0 24px; 
+            border: 1px solid #303030; border-right: none; font-size: 16px; 
+            background: #121212; color: #fff; outline: none; height: 40px;
+        }
+        #searchInput:focus { border-color: #1c62b9; }
+        #searchBtn { 
+            padding: 0 20px; border-radius: 0 24px 24px 0; border: 1px solid #303030; 
+            background: #222; color: #fff; font-size: 16px; cursor: pointer; 
+            height: 40px;
+        }
+        #searchBtn:hover { background: #303030; }
+
+        /* ===== LƯỚI VIDEO - CHUẨN YOUTUBE ===== */
+        .video-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 40px 16px;
+            margin-top: 12px;
+        }
+
+        .video-card { 
+            cursor: pointer; border-radius: 12px; overflow: hidden; 
+            transition: transform 0.2s ease;
+        }
+        .video-card:hover { transform: scale(1.03); }
+
+        /* Ảnh bìa 16:9 */
+        .video-thumbnail {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #272727;
+        }
+
+        /* Thông tin video */
+        .video-info { padding-top: 12px; display: flex; gap: 12px; }
+        .video-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: #333; flex-shrink: 0;
+        }
+        .video-meta { flex: 1; }
+        .video-title {
+            font-size: 16px; font-weight: 500; line-height: 1.4;
+            display: -webkit-box; -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2; overflow: hidden;
+            color: #fff; margin-bottom: 4px;
+        }
+        .video-channel {
+            font-size: 14px; color: #aaa; line-height: 1.4;
+        }
+        .video-channel:hover { color: #fff; }
+
+        /* ===== KHUNG PHÁT VIDEO ===== */
+        .player-layout { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1fr 400px; gap: 24px; }
+        .video-player { max-width: 100%; }
+        .player-wrapper { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; }
+        #videoTitle { font-size: 20px; font-weight: 600; margin: 12px 0 8px; line-height: 1.3; }
+
+        /* ===== VIDEO LIÊN QUAN ===== */
+        .related-section { max-width: 100%; }
+        .related-section h3 { font-size: 18px; margin-bottom: 16px; }
+        .related-grid { display: flex; flex-direction: column; gap: 12px; }
+        .related-card { display: flex; gap: 12px; cursor: pointer; border-radius: 8px; padding: 4px; transition: background 0.2s; }
+        .related-card:hover { background: #272727; }
+        .related-thumb { width: 168px; aspect-ratio: 16/9; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+        .related-info { flex: 1; }
+        .related-title { font-size: 14px; font-weight: 500; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; overflow: hidden; margin-bottom: 4px; }
+        .related-channel { font-size: 12px; color: #aaa; }
+        .error-text { color: #ff6b6b; font-size: 14px; padding: 10px; }
+
+        /* ===== KẾT QUẢ TÌM KIẾM ===== */
+        .search-results { max-width: 1280px; margin: 0 auto; }
+        .search-results h3 { font-size: 20px; margin-bottom: 16px; }
+        .section-title { font-size: 20px; font-weight: 600; margin: 40px 0 4px; }
+        .back-btn, .clear-search { 
+            background: #272727; border: none; color: #fff; 
+            padding: 8px 16px; border-radius: 18px; cursor: pointer; 
+            font-size: 14px; margin-bottom: 16px; transition: background 0.2s;
+        }
+        .back-btn:hover, .clear-search:hover { background: #3f3f3f; }
         .hidden { display: none !important; }
-        h2 { margin: 30px 0 10px; font-size: 18px; }
-        .back-btn { background: #272727; border: none; color: #fff; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-bottom: 15px; }
-        .back-btn:hover { background: #3f3f3f; }
+
+        /* === TỐI ƯU DI ĐỘNG === */
+        @media (max-width: 1024px) {
+            .player-layout { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 900px) {
+            .video-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 32px 12px; }
+            body { padding: 12px; }
+        }
+        @media (max-width: 600px) {
+            .video-grid { grid-template-columns: 1fr; gap: 24px; }
+            .related-card { flex-direction: column; }
+            .related-thumb { width: 100%; }
+        }
     </style>
 </head>
 <body>
 
-<!-- Khung phát video -->
-<div class="video-player hidden" id="playerSection">
-    <button class="back-btn" onclick="goHome()">← Trở về</button>
-    <iframe id="videoFrame" allowfullscreen></iframe>
-    <h3 id="videoTitle" style="margin:10px 0;"></h3>
+<!-- THANH TÌM KIẾM -->
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="Tìm kiếm">
+    <button id="searchBtn">🔍</button>
 </div>
 
-<!-- Danh sách video liên quan -->
-<div class="related-section hidden" id="relatedSection">
-    <h3>📺 Video liên quan</h3>
-    <div class="video-grid" id="relatedVideos"></div>
+<!-- KHUNG PHÁT + VIDEO LIÊN QUAN -->
+<div class="player-layout hidden" id="playerLayout">
+    <div class="video-player">
+        <button class="back-btn" onclick="goHome()">← Trở về</button>
+        <div class="player-wrapper">
+            <iframe id="videoFrame" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
+        <h3 id="videoTitle"></h3>
+    </div>
+    <div class="related-section">
+        <h3>Video liên quan</h3>
+        <div class="related-grid" id="relatedVideos"></div>
+    </div>
 </div>
 
-<!-- Trang chủ - 3 hàng video -->
+<!-- KẾT QUẢ TÌM KIẾM -->
+<div class="search-results hidden" id="searchSection">
+    <button class="clear-search" onclick="clearSearch()">✕ Xóa tìm kiếm</button>
+    <h3 id="searchQueryTitle">Kết quả tìm kiếm</h3>
+    <div class="video-grid" id="searchResults"></div>
+</div>
+
+<!-- TRANG CHỦ -->
 <div id="homePage">
-    <h2>🔥 Kênh 1</h2>
+    <h2 class="section-title">🔥 Kênh 1</h2>
     <div class="video-grid" id="channel1"></div>
 
-    <h2>🎵 Nhạc hay 2026</h2>
+    <h2 class="section-title">🎵 Nhạc hay 2026</h2>
     <div class="video-grid" id="searchList"></div>
 
-    <h2>📈 Trending</h2>
+    <h2 class="section-title">📈 Trending Việt Nam</h2>
     <div class="video-grid" id="trendingList"></div>
 </div>
 
@@ -63,19 +156,18 @@
 const API_KEY = "AIzaSyBna3fWAUyMfy4khuYSJEG1r6lHYIBTqVo";
 let currentVideoId = "";
 
-// ===== Mã hóa title: tiếng Việt → không dấu, khoảng cách thành dấu - =====
+// Mã hóa title → URL thân thiện
 function encodeTitle(title) {
     return title.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-// ===== Cập nhật URL → share được! dạng: ?watch=ID&title=ten-video =====
+// Cập nhật URL để share
 function updateURL(videoId, title) {
-    const encodedTitle = encodeTitle(title);
-    history.pushState(null, "", `?watch=${videoId}&title=${encodedTitle}`);
+    history.pushState(null, "", `?watch=${videoId}&title=${encodeTitle(title)}`);
 }
 
-// ===== Đọc tham số từ URL khi mở trang =====
+// Đọc tham số từ URL
 function getParamsFromURL() {
     const params = new URLSearchParams(window.location.search);
     return {
@@ -84,96 +176,202 @@ function getParamsFromURL() {
     };
 }
 
-// ===== Phát video =====
-async function playVideo(videoId, rawTitle = "") {
-    currentVideoId = videoId;
-    const title = rawTitle || "Video";
-    
-    // Cập nhật URL → copy & share được
-    updateURL(videoId, title);
-    
-    // Hiện player, ẩn trang chủ
-    document.getElementById("playerSection").classList.remove("hidden");
-    document.getElementById("relatedSection").classList.remove("hidden");
+// === TÌM KIẾM ===
+async function searchVideos(query) {
+    if (!query.trim()) return;
     document.getElementById("homePage").classList.add("hidden");
+    document.getElementById("playerLayout").classList.add("hidden");
+    document.getElementById("searchSection").classList.remove("hidden");
+    document.getElementById("searchQueryTitle").textContent = `🔍 Kết quả cho: ${query}`;
     
-    // Phát video
-    document.getElementById("videoFrame").src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-    document.getElementById("videoTitle").textContent = title;
-    
-    // Tải video liên quan
-    loadRelatedVideos(videoId);
-}
-
-// ===== Tải video liên quan =====
-async function loadRelatedVideos(videoId) {
     try {
-        const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=15&key=${API_KEY}`);
+        const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=24&regionCode=VN&key=${API_KEY}`);
         const data = await res.json();
         if (data.error) throw data.error;
-        renderVideoList(data.items, "relatedVideos");
+        renderVideoGrid(data.items, "searchResults");
     } catch (e) {
-        document.getElementById("relatedVideos").innerHTML = `<p>Lỗi tải video liên quan: ${e.message}</p>`;
+        document.getElementById("searchResults").innerHTML = `<p class="error-text">Lỗi tìm kiếm: ${e.message}</p>`;
     }
 }
 
-// ===== Hiển thị danh sách video =====
-function renderVideoList(videos, containerId) {
+function clearSearch() {
+    document.getElementById("searchSection").classList.add("hidden");
+    document.getElementById("searchInput").value = "";
+    document.getElementById("homePage").classList.remove("hidden");
+    history.pushState(null, "", window.location.pathname);
+}
+
+// === PHÁT VIDEO ===
+async function playVideo(videoId, rawTitle = "") {
+    currentVideoId = videoId;
+    const title = rawTitle || "Video";
+    updateURL(videoId, title);
+    
+    document.getElementById("homePage").classList.add("hidden");
+    document.getElementById("searchSection").classList.add("hidden");
+    document.getElementById("playerLayout").classList.remove("hidden");
+    
+    document.getElementById("videoFrame").src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+    document.getElementById("videoTitle").textContent = title;
+    
+    loadRelatedVideos(videoId);
+    window.scrollTo(0, 0);
+}
+
+// === TẢI VIDEO LIÊN QUAN - ĐÃ SỬA: Bỏ video hiện tại + Tải đủ 12 video ===
+async function loadRelatedVideos(videoId) {
+    const container = document.getElementById("relatedVideos");
+    container.innerHTML = "<p>Đang tải video liên quan...</p>";
+    
+    try {
+        // ✅ Tải 12 video liên quan (tăng maxResults)
+        const res = await fetch(
+            `https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${videoId}&type=video&maxResults=12&regionCode=VN&key=${API_KEY}`
+        );
+        const data = await res.json();
+        
+        if (data.error) throw new Error(data.error.message || "Lỗi API");
+        
+        if (!data.items || data.items.length === 0) {
+            throw new Error("Không có kết quả từ relatedToVideoId");
+        }
+        
+        // ✅ LỌC BỎ VIDEO ĐANG PHÁT ra khỏi danh sách
+        const filteredItems = data.items.filter(item => item.id.videoId !== videoId);
+        
+        if (filteredItems.length === 0) {
+            throw new Error("Chỉ có video hiện tại, không có video khác");
+        }
+        
+        // ✅ Hiển thị danh sách đã lọc
+        renderRelatedList(filteredItems, "relatedVideos");
+        
+    } catch (e) {
+        // ✅ Fallback: Tìm video tương tự bằng từ khóa kênh + tiêu đề
+        container.innerHTML = `<p class='error-text'>Đang tải video tương tự...</p>`;
+        
+        try {
+            // Lấy thông tin video hiện tại để tìm tương tự
+            const videoRes = await fetch(
+                `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${API_KEY}`
+            );
+            const videoData = await videoRes.json();
+            
+            let searchQuery = "nhạc";
+            if (videoData.items && videoData.items[0]) {
+                const snippet = videoData.items[0].snippet;
+                // Tìm theo tên kênh + từ khóa trong tiêu đề
+                searchQuery = `${snippet.channelTitle} ${snippet.title.split(" ").slice(0, 5).join(" ")}`;
+            }
+            
+            // Tìm 12 video liên quan
+            const res = await fetch(
+                `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchQuery)}&type=video&maxResults=12&regionCode=VN&key=${API_KEY}`
+            );
+            const data = await res.json();
+            
+            if (!data.items || data.items.length === 0) throw new Error("Không tìm thấy");
+            
+            // ✅ Lọc bỏ video hiện tại
+            const filtered = data.items.filter(item => item.id.videoId !== videoId);
+            
+            if (filtered.length === 0) {
+                container.innerHTML = "<p class='error-text'>Không có video liên quan</p>";
+                return;
+            }
+            
+            renderRelatedList(filtered, "relatedVideos");
+            
+        } catch (fallbackErr) {
+            container.innerHTML = `<p class='error-text'>Không tải được video liên quan: ${e.message}</p>`;
+        }
+    }
+}
+
+// === HIỂN THỊ LƯỚI VIDEO ===
+function renderVideoGrid(videos, containerId) {
     const container = document.getElementById(containerId);
     container.innerHTML = videos.map(v => {
         const id = v.id.videoId;
+        if (!id) return "";
         const title = v.snippet.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
         const thumb = v.snippet.thumbnails.medium.url;
+        const channel = v.snippet.channelTitle;
         return `
             <div class="video-card" onclick="playVideo('${id}', '${title}')">
-                <img src="${thumb}" alt="${v.snippet.title}">
-                <div class="video-title">${v.snippet.title}</div>
+                <img class="video-thumbnail" src="${thumb}" alt="${v.snippet.title}">
+                <div class="video-info">
+                    <div class="video-avatar"></div>
+                    <div class="video-meta">
+                        <div class="video-title">${v.snippet.title}</div>
+                        <div class="video-channel">${channel}</div>
+                    </div>
+                </div>
             </div>
         `;
     }).join("");
 }
 
-// ===== Tải trang chủ =====
-async function loadHomePage() {
-    // Hàng 1: Kênh 1 — thay channelId của bạn
-    const ch1 = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UC-8Qv...&maxResults=5&key=${API_KEY}`).then(r=>r.json());
-    renderVideoList(ch1.items, "channel1");
-
-    // Hàng 2: Tìm "nhạc hay 2026"
-    const search = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=nhạc hay 2026&maxResults=5&key=${API_KEY}`).then(r=>r.json());
-    renderVideoList(search.items, "searchList");
-
-    // Hàng 3: Trending Việt Nam
-    const trend = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=5&regionCode=VN&key=${API_KEY}`).then(r=>r.json());
-    renderVideoList(trend.items.map(item => ({...item, id: {videoId: item.id}})), "trendingList");
+// === HIỂN THỊ VIDEO LIÊN QUAN ===
+function renderRelatedList(videos, containerId) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = videos.map(v => {
+        const id = v.id.videoId;
+        if (!id) return "";
+        const title = v.snippet.title.replace(/'/g, "\\'").replace(/"/g, '\\"');
+        const thumb = v.snippet.thumbnails.medium.url;
+        const channel = v.snippet.channelTitle;
+        return `
+            <div class="related-card" onclick="playVideo('${id}', '${title}')">
+                <img class="related-thumb" src="${thumb}" alt="${v.snippet.title}">
+                <div class="related-info">
+                    <div class="related-title">${v.snippet.title}</div>
+                    <div class="related-channel">${channel}</div>
+                </div>
+            </div>
+        `;
+    }).join("");
 }
 
-// ===== Trở về trang chủ =====
+// === TẢI TRANG CHỦ ===
+async function loadHomePage() {
+    // Hàng 1: Kênh 1 — thay channelId của bạn
+    const ch1 = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UC-8Qv...&maxResults=8&regionCode=VN&key=${API_KEY}`).then(r=>r.json());
+    renderVideoGrid(ch1.items, "channel1");
+
+    // Hàng 2: Tìm "nhạc hay 2026"
+    const search = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=nhạc hay 2026&maxResults=8&regionCode=VN&key=${API_KEY}`).then(r=>r.json());
+    renderVideoGrid(search.items, "searchList");
+
+    // Hàng 3: Trending Việt Nam
+    const trend = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=8&regionCode=VN&key=${API_KEY}`).then(r=>r.json());
+    renderVideoGrid(trend.items.map(item => ({...item, id: {videoId: item.id}})), "trendingList");
+}
+
 function goHome() {
     history.pushState(null, "", window.location.pathname);
-    document.getElementById("playerSection").classList.add("hidden");
-    document.getElementById("relatedSection").classList.add("hidden");
+    document.getElementById("playerLayout").classList.add("hidden");
+    document.getElementById("searchSection").classList.add("hidden");
     document.getElementById("homePage").classList.remove("hidden");
     document.getElementById("videoFrame").src = "";
     currentVideoId = "";
+    window.scrollTo(0, 0);
 }
 
-// ===== Nút quay lại/trước của trình duyệt =====
 window.addEventListener("popstate", () => {
     const { videoId } = getParamsFromURL();
     if (!videoId) goHome();
 });
 
-// ===== KHỞI ĐỘNG: Đọc URL ngay khi mở trang =====
+// Sự kiện tìm kiếm
+document.getElementById("searchBtn").addEventListener("click", () => searchVideos(document.getElementById("searchInput").value));
+document.getElementById("searchInput").addEventListener("keydown", e => e.key === "Enter" && searchVideos(e.target.value));
+
+// Khởi động
 window.addEventListener("load", () => {
     const { videoId, title } = getParamsFromURL();
-    if (videoId) {
-        // Có tham số trong link → tự động phát (dùng cho share link)
-        playVideo(videoId, title);
-    } else {
-        // Không có → tải trang chủ
-        loadHomePage();
-    }
+    if (videoId) playVideo(videoId, title);
+    else loadHomePage();
 });
 </script>
 </body>
